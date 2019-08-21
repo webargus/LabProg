@@ -10,7 +10,7 @@ from tkinter.ttk import *
 import os
 import ScrollableText
 import CombPanel
-import GraphPanel
+import MapPanel
 import Tools
 
 
@@ -51,7 +51,7 @@ class Gui(Frame):
         self.nb.bind("<<NotebookTabChanged>>", self._tab_switch)
 
         CombPanel.CombPanel(self.nb_files[0][1])
-        GraphPanel.GraphPanel(self.nb_files[1][1])
+        MapPanel.MapPanel(self.nb_files[1][1])
 
         frame = Frame(self)
         frame.grid({"row": 0, "column": 1, "sticky": NSEW, "pady": 4, "padx": 4})

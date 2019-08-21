@@ -9,7 +9,7 @@ from tkinter import *
 import MapCanvas
 
 
-class GraphPanel:
+class MapPanel:
 
     def __init__(self, frame):
 
@@ -75,24 +75,11 @@ class GraphPanel:
         canvasF.grid({"pady": 8, "padx": 8, "row": 2, "column": 0, "sticky": NSEW})
         canvasF.grid_columnconfigure(0, weight=1)
         canvasF.grid_rowconfigure(0, weight=1)
-        # create graph canvas passing callback from Dijkstra calculation
-        self.canvas = MapCanvas.MapCanvas(canvasF, self._do_dijkstra)
-
-    def _do_dijkstra(self, sel, graph):
-        dist, prev = graph.dijkstra(sel[0], sel[1])
-        s, dist = graph.reverse_path(prev, sel[0], sel[1])
-        if len(s) == 0:
-            s = "Destino inacessível"
-        else:
-            # draw Dijkstra path here
-            node_ids = [int(x) for x in s.split('->')]
-            for i in range(len(node_ids) - 1):
-                self.canvas.draw_path_edge(node_ids[i], node_ids[i+1])
-        self.path.config(text=("Menor caminho: %s" % s))
-        self.result.config(text=("Total percorrido: %.2f" % dist))
+        # create graph canvas
+        self.canvas = MapCanvas.MapCanvas(canvasF)
 
     def _generate_map(self):
-        self.canvas.generate_map()
+        self.canvas.generate_random_map()
 
     def _reset_canvas(self):
         self.path.config(text="")
