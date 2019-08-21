@@ -23,7 +23,7 @@ class MapPanel:
 
         header = Frame(wrap)
         header.grid({"row": 0, "column": 0, "sticky": NSEW})
-        l1 = Label(header, {"text": "Cálculo do menor percurso pelo algoritmo de Dijkstra",
+        l1 = Label(header, {"text": "Map coloring based on the graph greedy coloring algorithm",
                             "font": ("Arial", 12)})
         l1.grid({"row": 0, "column": 0})
 
@@ -31,10 +31,9 @@ class MapPanel:
         form.grid({"row": 1, "column": 0, "sticky": NSEW, "pady": 8, "padx": 8})
         form.grid_columnconfigure(0, weight=1)
 
-        text = " Como usar:\n"
-        text += " Criar vértice: clique na área em branco abaixo.\n"
-        text += " Criar aresta: clique nos vértices que quer conectar.\n"
-        text += " Dijkstra: clique no vértice inicial e no final \n\tcom a tecla CTRL pressionada."
+        text = " Instructions:\n"
+        text += " 1. Click on the [Create map] button to create a random map.\n"
+        text += " 2. Click on the [Color map] button to run coloring algorithm.\n"
         self.info_img = PhotoImage(file="info24.png")
         Label(form,
               relief=SUNKEN,
@@ -52,24 +51,17 @@ class MapPanel:
         self.result.grid(row=2, column=0, sticky=W)
 
         # clear btns
-        self.reset = Button(form,
+        self.create = Button(form,
+                             width=10,
+                             command=self._generate_map,
+                             text="Create map")
+        self.create.grid(row=1, column=1, sticky=E, pady=8)
+        self.color = Button(form,
                             width=10,
-                            command=self._generate_map,
-                            text="Gerar mapa")
-        self.reset.grid(row=1, column=1, sticky=E, pady=8)
-        self.clear = Button(form,
-                            width=10,
-                            command=self._clear_canvas,
-                            text="Excluir mapa")
-        self.clear.grid(row=2, column=1, stick=E)
-        # infos btn
-        """self.info_img = PhotoImage(file="info24.png")
-        Button(form,
-               image=self.info_img,
-               width=24,
-               height=24,
-               command=GraphPanel._infos,
-               anchor=W).grid(row=2, column=0, sticky=W, pady=8)"""
+                            command=self._color_canvas,
+                            text="Color map",
+                            state="disabled")
+        self.color.grid(row=2, column=1, stick=E)
 
         canvasF = Frame(wrap, {"relief": SUNKEN, "border": 1})
         canvasF.grid({"pady": 8, "padx": 8, "row": 2, "column": 0, "sticky": NSEW})
@@ -80,16 +72,20 @@ class MapPanel:
 
     def _generate_map(self):
         self.canvas.generate_random_map()
+        self.color.config({"state": "normal"})
 
     def _reset_canvas(self):
         self.path.config(text="")
         self.result.config(text="")
         self.canvas.remove_tags()
 
-    def _clear_canvas(self):
+    def _color_canvas(self):
         self.path.config(text="")
         self.result.config(text="")
-        self.canvas.clear()
+        self.canvas.paint_map()
+
+
+
 
 
 

@@ -38,6 +38,12 @@ class Node:
                 return edge
         return None
 
+    # overloaded python std function to print node data for debugging
+    def __str__(self):
+        ret = "%d: " % self.node_id
+        ret += "; ".join([("%d" % edge.n2.node_id) for edge in self.edges])
+        return ret
+
     # minimum overload to make Node objects hashable, so that we can use them as dictionary keys
     def __hash__(self):
         return hash(self.node_id)
@@ -62,10 +68,22 @@ class Node:
 #   class ColorNode just adds color member to class Node
 class ColorNode(Node):
 
+    COLOR_RED = "red"
+    COLOR_GREEN = "green"
+    COLOR_BLUE = "blue"
+
     def __init__(self, node_id):
         super(ColorNode, self).__init__(node_id)
         self.color = None
 
+
+class Graph(list):
+
+    def __init__(self):
+        super(Graph, self).__init__()
+
+    def assign_colors(self):
+        print("assign_colors")
 
 
 

@@ -24,7 +24,7 @@ class MapCanvas:
 
     def __init__(self, frame):
 
-        self.graph = []
+        self.graph = Graph.Graph()
 
         self.canvas = Canvas(frame, background="white", cursor="tcross")
         self.canvas.grid(row=0, column=0, sticky=NSEW)
@@ -67,6 +67,12 @@ class MapCanvas:
             yy0 = y0
             yy1 = y1
             prev_node = node
+        # debugging:
+        for node in self.graph:
+            print(node)
+
+    def paint_map(self):
+        self.graph.assign_colors()
 
     def clear(self):
         # clear entire canvas drawing area and wipe out previous graph, if any
