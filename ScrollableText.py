@@ -1,8 +1,9 @@
 """
     Class ScrollableText
-    Authors: Edson Kropniczki + Cristina Oliveira - kropniczki@gmail.com - (c) Jun/2019
+    Author: Edson Kropniczki - kropniczki@gmail.com - (c) Jun/2019
     Disclaimer: use it on your own risk!
     License: feel free to mess up with it at will, provided you display this header in your code!
+    Purpose: a tkinter Text widget fitted with a scrollbar
 """
 
 from tkinter import *

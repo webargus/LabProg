@@ -21,17 +21,8 @@ class Gui(Frame):
         Frame.__init__(self)
         Tools.Tools.root(self.master)
         Tools.Tools.center_window(self.master, 1120, 600)
-        #img = Image("photo", file="info24.png")
-        #self.master.tk.call('wm', 'photo', self.master._w, img)
-        #sp = '/home/wegargus/PycharmProjects/MatematicaDiscretaIII/'
-        #self.master.iconbitmap(os.path.join(sp, 'icon32.bmp'))
-        #sp = '/home/wegargus/PycharmProjects/LabProg/'
-        #self.imgicon = PhotoImage(file=os.path.join(sp, 'icon32.png'))
         self.imgicon = PhotoImage(file='icon32.png')
         self.master.tk.call('wm', 'iconphoto', self.master._w, self.imgicon)
-
-        #self.il = Label(self.master, image=self.imgicon, compound=LEFT, text="Matemática Discreta")
-        #self.master.iconwindow(self.il)
 
         self.master.resizable(0, 0)
         self.master.state('normal')

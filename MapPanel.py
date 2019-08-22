@@ -2,7 +2,7 @@
 """
     UFRPE - BSI2019.2
     Author: Edson Kropniczki
-    Description: GUI for drawing very simple random maps
+    Description: GUI for drawing simple random maps
 """
 
 from tkinter import *
