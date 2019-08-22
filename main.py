@@ -10,7 +10,7 @@ from tkinter import *
 from tkinter.ttk import *
 import os
 import ScrollableText
-import CombPanel
+import LinearRobotPanel
 import MapPanel
 import Tools
 
@@ -25,8 +25,9 @@ class Gui(Frame):
         #self.master.tk.call('wm', 'photo', self.master._w, img)
         #sp = '/home/wegargus/PycharmProjects/MatematicaDiscretaIII/'
         #self.master.iconbitmap(os.path.join(sp, 'icon32.bmp'))
-        sp = '/home/wegargus/PycharmProjects/LabProg/'
-        self.imgicon = PhotoImage(file=os.path.join(sp, 'icon32.png'))
+        #sp = '/home/wegargus/PycharmProjects/LabProg/'
+        #self.imgicon = PhotoImage(file=os.path.join(sp, 'icon32.png'))
+        self.imgicon = PhotoImage(file='icon32.png')
         self.master.tk.call('wm', 'iconphoto', self.master._w, self.imgicon)
 
         #self.il = Label(self.master, image=self.imgicon, compound=LEFT, text="Matemática Discreta")
@@ -43,14 +44,14 @@ class Gui(Frame):
 
         self.nb = Notebook(self)
         #   add tabs
-        self.nb_files = [("Linear Robot", Frame(self.nb), "Comb"),
+        self.nb_files = [("Linear Robot", Frame(self.nb), "LinearRobot"),
                          ("Map Coloring", Frame(self.nb), "Graph")]
         for i in self.nb_files:
             self.nb.add(i[1], text="    " + i[0] + "    ")
         self.nb.grid({"row": 0, "column": 0, "sticky": NSEW})
         self.nb.bind("<<NotebookTabChanged>>", self._tab_switch)
 
-        CombPanel.CombPanel(self.nb_files[0][1])
+        LinearRobotPanel.LinearRobotPanel(self.nb_files[0][1])
         MapPanel.MapPanel(self.nb_files[1][1])
 
         frame = Frame(self)
