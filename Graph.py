@@ -13,6 +13,8 @@
         Use it at your own risk!
 """
 
+import random
+
 
 class Node:
 
@@ -38,12 +40,6 @@ class Node:
                 return edge
         return None
 
-    # overloaded python std function to print node data for debugging
-    def __str__(self):
-        ret = "%d: " % self.node_id
-        ret += "; ".join([("%d" % edge.n2.node_id) for edge in self.edges])
-        return ret
-
     # minimum overload to make Node objects hashable, so that we can use them as dictionary keys
     def __hash__(self):
         return hash(self.node_id)
@@ -68,13 +64,17 @@ class Node:
 #   class ColorNode just adds color member to class Node
 class ColorNode(Node):
 
-    COLOR_RED = "red"
-    COLOR_GREEN = "green"
-    COLOR_BLUE = "blue"
+    COLORS = ["yellow", "green", "blue", "red", "orange"]
 
     def __init__(self, node_id):
         super(ColorNode, self).__init__(node_id)
         self.color = None
+
+    # std python overload to print node data for debugging
+    def __str__(self):
+        ret = "node id: %d; color: %s ; has edges to nodes: " % (self.node_id, self.color)
+        ret += ", ".join([("%d" % edge.n2.node_id) for edge in self.edges])
+        return ret
 
 
 class Graph(list):
@@ -83,7 +83,30 @@ class Graph(list):
         super(Graph, self).__init__()
 
     def assign_colors(self):
-        print("assign_colors")
+
+        if len(self) < 2:
+            return False
+
+        # assign colors to nodes
+        for node in self:
+            self._assign_color(node)
+
+    def _assign_color(self, node):
+
+        random.shuffle(ColorNode.COLORS)
+
+        for color in ColorNode.COLORS:
+            available = True
+            for edge in node.edges:
+                if edge.n2.color == color:
+                    available = False
+                    break
+            if available:
+                node.color = color
+                return
+
+
+
 
 
 

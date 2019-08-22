@@ -1,8 +1,8 @@
 
 """
-    UFRPE - BSI2019.1 - Matemática Discreta - Trabalho 2 - 2ª VA
-    Dupla: Edson Kropniczki + Cristina Oliveira
-    Descrição: GUI para executar o algoritmo de Dijkstra
+    UFRPE - BSI2019.2
+    Author: Edson Kropniczki
+    Description: GUI for drawing very simple random maps
 """
 
 from tkinter import *
@@ -50,7 +50,7 @@ class MapPanel:
         self.result = Label(form, anchor=W)
         self.result.grid(row=2, column=0, sticky=W)
 
-        # clear btns
+        # btns
         self.create = Button(form,
                              width=10,
                              command=self._generate_map,
@@ -74,15 +74,11 @@ class MapPanel:
         self.canvas.generate_random_map()
         self.color.config({"state": "normal"})
 
-    def _reset_canvas(self):
-        self.path.config(text="")
-        self.result.config(text="")
-        self.canvas.remove_tags()
-
     def _color_canvas(self):
         self.path.config(text="")
         self.result.config(text="")
         self.canvas.paint_map()
+        self.color.config({"state": "disabled"})
 
 
 

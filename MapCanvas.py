@@ -67,12 +67,14 @@ class MapCanvas:
             yy0 = y0
             yy1 = y1
             prev_node = node
-        # debugging:
-        for node in self.graph:
-            print(node)
 
     def paint_map(self):
         self.graph.assign_colors()
+        # debugging:
+        for node in self.graph:
+            print(node)
+        for node in self.graph:
+            self.canvas.create_rectangle(self.canvas.coords(node.node_id), fill=node.color)
 
     def clear(self):
         # clear entire canvas drawing area and wipe out previous graph, if any
