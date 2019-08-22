@@ -6,7 +6,6 @@
 
 
 from tkinter import *
-from tkinter import messagebox
 import ScrollableText
 import LinearRobot
 
@@ -31,6 +30,7 @@ class LinearRobotPanel:
 
         form = Frame(wrap, {"pady": 8, "padx": 8})
         form.grid({"row": 1, "column": 0, "sticky": NSEW, "pady": 8, "padx": 8})
+        form.grid_columnconfigure(1, weight=1)
 
         # random string button
         params = {"text": "Generate random string",
@@ -56,22 +56,44 @@ class LinearRobotPanel:
                   }
         Button(form, params).grid({"row": 3, "column": 0, "sticky": W})
 
+        # button for cleaning report text area
+        params = {"text": "Clean report",
+                  "width": 20,
+                  "font": ("Arial", 10),
+                  "command": self._clear_report
+                  }
+        Button(form, params).grid({"row": 0, "column": 1, "rowspan": 4, "sticky": E})
+
         text = Frame(wrap, {"pady": 8, "padx": 8})
         text.grid({"row": 4, "column": 0, "sticky": NSEW})
         text.grid_columnconfigure(0, weight=1)
         text.grid_rowconfigure(0, weight=1)
         self.text = ScrollableText.ScrollableText(text)
 
+        self.robot = LinearRobot.LinearRobot()
+
     def _gen_string(self):
-        pass
+        self.robot.gen_rnd_str()
+        self.text.append_text("Random robot FT command string:\n")
+        self.text.append_text(self.robot.command)
+        self.text.append_text("\n\n")
 
     def _reg_exp(self):
-        pass
+        if self.robot.command is None:
+            return
+        self.robot.apply_reg_exp()
+        self.text.append_text("F commands filtered out from random command string:\n")
+        self.text.append_text("[" + ", ".join(self.robot.result) + "]")
+        self.text.append_text("\n\n")
 
     def _calc_position(self):
-        pass
+        if self.robot.result is None:
+            return
+        self.robot.calc_robot_pos()
+        self.text.append_text("Linear robot landing position: %d\n\n" % self.robot.position)
 
-
+    def _clear_report(self):
+        self.text.clear()
 
 
 
