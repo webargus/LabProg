@@ -38,30 +38,24 @@ class MapPanel:
         Label(form,
               relief=SUNKEN,
               text=text,
-              font=("Arial, sans-serif", 10),
+              font=("Arial, sans-serif", 9),
               image=self.info_img,
               compound=LEFT,
               justify=LEFT,
               anchor=W).grid(row=0, column=0, sticky=EW, pady=8, columnspan=2)
-
-        # result report labels
-        self.path = Label(form, anchor=W)
-        self.path.grid(row=1, column=0, sticky=W)
-        self.result = Label(form, anchor=W)
-        self.result.grid(row=2, column=0, sticky=W)
 
         # btns
         self.create = Button(form,
                              width=10,
                              command=self._generate_map,
                              text="Create map")
-        self.create.grid(row=1, column=1, sticky=E, pady=8)
+        self.create.grid(row=1, column=0, sticky=W, pady=8)
         self.color = Button(form,
                             width=10,
                             command=self._color_canvas,
                             text="Color map",
                             state="disabled")
-        self.color.grid(row=2, column=1, stick=E)
+        self.color.grid(row=1, column=1, stick=E)
 
         canvasF = Frame(wrap, {"relief": SUNKEN, "border": 1})
         canvasF.grid({"pady": 8, "padx": 8, "row": 2, "column": 0, "sticky": NSEW})
@@ -75,8 +69,6 @@ class MapPanel:
         self.color.config({"state": "normal"})
 
     def _color_canvas(self):
-        self.path.config(text="")
-        self.result.config(text="")
         self.canvas.paint_map()
         self.color.config({"state": "disabled"})
 

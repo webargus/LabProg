@@ -1,7 +1,7 @@
 """
-    UFRPE - BSI2019.1 - Matemática Discreta - Trabalho 2 - 2ª VA
-    Dupla: Edson Kropniczki + Cristina Oliveira
-    Descrição: Gui para cálculo de combinação (Comb.py)
+    UFRPE - BSI2019.2
+    Author: Edson Kropniczki
+    Description: GUI to implement linear robot lazy algorithm
 """
 
 

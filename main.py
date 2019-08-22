@@ -1,8 +1,9 @@
 
 """
-    UFRPE - BSI2019.1 - Matemática Discreta - Trabalho 2 - 2ª VA
-    Dupla: Edson Kropniczki + Cristina Oliveira
-    Descrição: Interface gráfica para o Trabalho 2
+    UFRPE - BSI2019.2 - LP - Homework 1
+    Due date: aug/23 2019
+    Author: Edson Kropniczki
+    Description: Homework main GUI
 """
 
 from tkinter import *
@@ -24,17 +25,16 @@ class Gui(Frame):
         #self.master.tk.call('wm', 'photo', self.master._w, img)
         #sp = '/home/wegargus/PycharmProjects/MatematicaDiscretaIII/'
         #self.master.iconbitmap(os.path.join(sp, 'icon32.bmp'))
-        sp = '/home/wegargus/PycharmProjects/MatematicaDiscretaIII/'
+        sp = '/home/wegargus/PycharmProjects/LabProg/'
         self.imgicon = PhotoImage(file=os.path.join(sp, 'icon32.png'))
         self.master.tk.call('wm', 'iconphoto', self.master._w, self.imgicon)
 
         #self.il = Label(self.master, image=self.imgicon, compound=LEFT, text="Matemática Discreta")
         #self.master.iconwindow(self.il)
 
-
         self.master.resizable(0, 0)
         self.master.state('normal')
-        self.master.title("Matemática Discreta - Trabalho 2 - SI2019.1")
+        self.master.title("Laboratório de Programação - Trabalho 1' - SI2019.2")
         self.master.grid_rowconfigure(0, weight=1)
         self.master.grid_columnconfigure(0, weight=1)
         self.grid({"row": 0, "column": 0, "sticky": NSEW})
@@ -43,8 +43,8 @@ class Gui(Frame):
 
         self.nb = Notebook(self)
         #   add tabs
-        self.nb_files = [("Combinação", Frame(self.nb), "Comb"),
-                         ("Dijkstra", Frame(self.nb), "Graph")]
+        self.nb_files = [("Linear Robot", Frame(self.nb), "Comb"),
+                         ("Map Coloring", Frame(self.nb), "Graph")]
         for i in self.nb_files:
             self.nb.add(i[1], text="    " + i[0] + "    ")
         self.nb.grid({"row": 0, "column": 0, "sticky": NSEW})

@@ -19,7 +19,6 @@ import Graph
 
 class MapCanvas:
 
-    DOT_RADIUS = 4
     MIN_BOX_WIDTH = MIN_BOX_HEIGHT = 30
 
     def __init__(self, frame):

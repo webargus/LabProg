@@ -2,7 +2,7 @@
 """
     UFRPE - BSI2019.2 - ILP - Homework 1
     Due date: 2019/08/23
-    Description: Node + Edge ancillary classes for building graphs
+    Description: Graph + Node + Edge classes
     Author:
         Edson Kropniczki - (c) aug/2019 - all rights reserved
     License:
@@ -11,9 +11,49 @@
         actually, accretions and improvements are more than welcome! :)
     Disclaimer:
         Use it at your own risk!
+
+*******************************************************************************************************
+    Web search references:
+        https://en.wikipedia.org/wiki/Four_color_theorem
+        https://en.wikipedia.org/wiki/Graph_coloring#Algorithms
+        https://www.geeksforgeeks.org/graph-coloring-set-2-greedy-algorithm/
+        http://www.dharwadker.org/vertex_coloring/
 """
 
 import random
+
+
+class Graph(list):
+
+    def __init__(self):
+        super(Graph, self).__init__()
+
+    def assign_colors(self):
+
+        # we need at least 2 nodes in graph if we want to paint them with different colors
+        if len(self) < 2:
+            return
+
+        # assign colors to nodes
+        for node in self:
+            self._assign_color(node)
+
+    def _assign_color(self, node):
+
+        # shuffle colors just for fun
+        random.shuffle(ColorNode.COLORS)
+
+        # try to pick an available color from color list
+        # available colors are colors which were not assigned to any node having an edge to this node
+        for color in ColorNode.COLORS:
+            available = True
+            for edge in node.edges:
+                if edge.n2.color == color:
+                    available = False
+                    break
+            if available:
+                node.color = color
+                return
 
 
 class Node:
@@ -33,23 +73,6 @@ class Node:
             self.edges.append(edge)
             other.add_edge(self)
 
-    # return Edge obj between this Node and @other, if any
-    def get_edge(self, other):
-        for edge in self.edges:
-            if edge.n2 == other:
-                return edge
-        return None
-
-    # minimum overload to make Node objects hashable, so that we can use them as dictionary keys
-    def __hash__(self):
-        return hash(self.node_id)
-
-    def __eq__(self, other):
-        return (self.node_id == other.node_id) and (self.edges == other.edges)
-
-    def __ne__(self, other):
-        return not(self == other)
-
     # Nested class Edge to construct edge objects between Node instances
     class Edge:
 
@@ -64,7 +87,7 @@ class Node:
 #   class ColorNode just adds color member to class Node
 class ColorNode(Node):
 
-    COLORS = ["yellow", "green", "blue", "red", "orange"]
+    COLORS = ["yellow", "green", "blue"]
 
     def __init__(self, node_id):
         super(ColorNode, self).__init__(node_id)
@@ -76,34 +99,6 @@ class ColorNode(Node):
         ret += ", ".join([("%d" % edge.n2.node_id) for edge in self.edges])
         return ret
 
-
-class Graph(list):
-
-    def __init__(self):
-        super(Graph, self).__init__()
-
-    def assign_colors(self):
-
-        if len(self) < 2:
-            return False
-
-        # assign colors to nodes
-        for node in self:
-            self._assign_color(node)
-
-    def _assign_color(self, node):
-
-        random.shuffle(ColorNode.COLORS)
-
-        for color in ColorNode.COLORS:
-            available = True
-            for edge in node.edges:
-                if edge.n2.color == color:
-                    available = False
-                    break
-            if available:
-                node.color = color
-                return
 
 
 
