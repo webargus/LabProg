@@ -34,26 +34,21 @@ class Graph(list):
         if len(self) < 2:
             return
 
-        # assign colors to nodes
-        for node in self:
-            self._assign_color(node)
-
-    def _assign_color(self, node):
-
         # shuffle colors just for fun
         random.shuffle(ColorNode.COLORS)
 
-        # try to pick an available color from color list
-        # available colors are colors which were not assigned to any node having an edge to this node
-        for color in ColorNode.COLORS:
-            available = True
+        # assign colors to nodes
+        for node in self:
+            # try to pick an available color from color list
+            # available colors are colors which were not assigned to any node having an edge to this node
+            available_colors = [color for color in ColorNode.COLORS]
             for edge in node.edges:
-                if edge.n2.color == color:
-                    available = False
-                    break
-            if available:
-                node.color = color
-                return
+                if edge.n2.color == available_colors[0]:
+                    available_colors = available_colors[1:]
+                if len(available_colors) == 0:
+                    print("Can't color map: not enough colors available")
+                    exit()
+            node.color = available_colors[0]
 
 
 class Node:
@@ -87,7 +82,7 @@ class Node:
 #   class ColorNode just adds color member to class Node
 class ColorNode(Node):
 
-    COLORS = ["yellow", "green", "blue"]
+    COLORS = ["yellow", "green", "blue", "orange", "red", "cyan", "white"]
 
     def __init__(self, node_id):
         super(ColorNode, self).__init__(node_id)
