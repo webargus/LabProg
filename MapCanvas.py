@@ -52,19 +52,22 @@ class MapCanvas:
         self.canvas.itemconfigure(state_id, fill="gray")
         # get ids of overlapped states
         ovl = self.canvas.find_overlapping(*self.canvas.coords(state_id))
-
+        # split tags to get rid of eventual 'current' tag that tkinter sometimes appends to tags list
         ovl = [self.canvas.itemcget(sid, "tags").split(" ")[0] for sid in ovl]
+        # sift through overlapped list one last time to pick state tags only, except current state
         ovl = [tag for tag in ovl if tag.startswith("state_") and tag != state_tag]
         # print(ovl)      # debug
+        # create graph color node with ID equal to latest (current) state tag...
         node = Graph.ColorNode(state_tag)
+        # ... and add edges to node created, corresponding to the nodes it overlaps (border states)
         for tag in ovl:
             node.add_edge(self.graph.get_node_by_id(tag))
+        # add node to graph
         self.graph.append(node)
+        # increment global node index
         self.state_node += 1
 
     def paint_map(self):
-        if len(self.graph) < 1:
-            return
         self.graph.assign_colors()
         # debugging:
         for node in self.graph:

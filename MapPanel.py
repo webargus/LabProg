@@ -31,14 +31,14 @@ class MapPanel:
         form.grid({"row": 1, "column": 0, "sticky": NSEW, "pady": 8, "padx": 8})
         form.grid_columnconfigure(0, weight=1)
 
-        text = " Instructions:\n"
-        text += " 1. Click on the [Create map] button to create a random map.\n"
-        text += " 2. Click on the [Color map] button to run coloring algorithm.\n"
+        text = " How to build a Retolandia map with rectangles:\n"
+        text += " 1. Click on the map area to stick a 1st State border vertex.\n"
+        text += " 2. Click again on map area to build a State between both marks.\n"
         self.info_img = PhotoImage(file="info24.png")
         Label(form,
               relief=SUNKEN,
               text=text,
-              font=("Arial, sans-serif", 9),
+              font=("Arial, sans-serif", 8),
               image=self.info_img,
               compound=LEFT,
               justify=LEFT,
@@ -54,7 +54,7 @@ class MapPanel:
         # btns
         self.clear_btn = Button(form,
                                 width=10,
-                                command=self.canvas.clear,
+                                command=self._clear_map,
                                 text="Clear map")
         self.clear_btn.grid(row=1, column=0, sticky=W, pady=8)
         self.undo_btn = Button(form,
@@ -64,11 +64,22 @@ class MapPanel:
         self.undo_btn.grid(row=1, column=1, sticky=W, pady=8)
         self.colorize_btn = Button(form,
                                    width=10,
-                                   command=self.canvas.paint_map,
+                                   command=self._colorize_map,
                                    text="Color map")
         self.colorize_btn.grid(row=1, column=2, stick=W)
 
+    def _colorize_map(self):
+        # we need at least 1 state to color map
+        if len(self.canvas.graph) < 1:
+            return
+        self.canvas.paint_map()
+        self.colorize_btn.configure(state="disabled")
+        self.undo_btn.configure(state="disabled")
 
+    def _clear_map(self):
+        self.canvas.clear()
+        self.colorize_btn.configure(state="normal")
+        self.undo_btn.configure(state="normal")
 
 
 

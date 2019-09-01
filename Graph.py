@@ -1,14 +1,14 @@
 
 """
-    UFRPE - BSI2019.2 - ILP - Homework 1
-    Due date: 2019/08/23
-    Description: Graph + Node + Edge classes
+    UFRPE - BSI2019.2 - ILP - Homework 2
+    Due date: 2019/09/06
+    Description: Graph + Node + Edge classes to build and color user-defined map
+                 *** Coloring algorithm defined in method assign_colors of Graph class ***
     Author:
-        Edson Kropniczki - (c) aug/2019 - all rights reserved
+        Edson Kropniczki - (c) sep/2019 - all rights reserved
     License:
         just keep this header in your copy and feel free to mess up with this code as you please;
         source code also publicly available at https://github.com/webargus/LabProg;
-        actually, accretions and improvements are more than welcome! :)
     Disclaimer:
         Use it at your own risk!
 
@@ -39,10 +39,6 @@ class Graph(list):
         super(Graph, self).remove(node)
 
     def assign_colors(self):
-
-        # we need at least 2 nodes in graph if we want to paint them with different colors
-        if len(self) < 2:
-            return
 
         # shuffle colors just for fun
         # random.shuffle(ColorNode.COLORS)
@@ -78,6 +74,7 @@ class Node:
             self.edges.append(edge)
             other.add_edge(self)
 
+    # remove edges of this node; needed when undoing map
     def remove_edges(self):
         for edge in self.edges:
             edge.n2.remove_edge(self)
