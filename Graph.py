@@ -45,7 +45,7 @@ class Graph(list):
             return
 
         # shuffle colors just for fun
-        random.shuffle(ColorNode.COLORS)
+        # random.shuffle(ColorNode.COLORS)
 
         # assign colors to nodes
         for node in self:

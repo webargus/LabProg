@@ -62,21 +62,11 @@ class MapPanel:
                                command=self.canvas.undo,
                                text="Undo last")
         self.undo_btn.grid(row=1, column=1, sticky=W, pady=8)
-        self.color = Button(form,
-                            width=10,
-                            command=self._color_canvas,
-                            text="Color map",
-                            state="disabled")
-        self.color.grid(row=1, column=2, stick=E)
-
-    def _generate_map(self):
-        self.canvas.generate_random_map()
-        self.color.config({"state": "normal"})
-
-    def _color_canvas(self):
-        self.canvas.paint_map()
-        self.color.config({"state": "disabled"})
-
+        self.colorize_btn = Button(form,
+                                   width=10,
+                                   command=self.canvas.paint_map,
+                                   text="Color map")
+        self.colorize_btn.grid(row=1, column=2, stick=W)
 
 
 

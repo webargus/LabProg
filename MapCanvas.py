@@ -55,7 +55,7 @@ class MapCanvas:
 
         ovl = [self.canvas.itemcget(sid, "tags").split(" ")[0] for sid in ovl]
         ovl = [tag for tag in ovl if tag.startswith("state_") and tag != state_tag]
-        print(ovl)      # debug
+        # print(ovl)      # debug
         node = Graph.ColorNode(state_tag)
         for tag in ovl:
             node.add_edge(self.graph.get_node_by_id(tag))
@@ -63,6 +63,8 @@ class MapCanvas:
         self.state_node += 1
 
     def paint_map(self):
+        if len(self.graph) < 1:
+            return
         self.graph.assign_colors()
         # debugging:
         for node in self.graph:
@@ -71,13 +73,15 @@ class MapCanvas:
             self.canvas.itemconfigure(node.node_id, fill=node.color)
 
     def undo(self):
+        if len(self.graph) == 0:
+            return
         if self.state_node > 1:
             self.state_node -= 1
         node_id = "state_%d" % self.state_node
         self.canvas.delete(node_id)
         self.graph.remove(self.graph.get_node_by_id(node_id))
-        for n in self.graph:
-            print(n)
+        '''for n in self.graph:         # debug
+            print(n)'''
 
     def clear(self):
         # clear entire canvas drawing area and wipe out previous graph, if any
