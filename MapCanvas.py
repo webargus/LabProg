@@ -13,13 +13,10 @@
 """
 
 from tkinter import *
-import random
 import Graph
 
 
 class MapCanvas:
-
-    MIN_BOX_WIDTH = MIN_BOX_HEIGHT = 30
 
     def __init__(self, frame):
 
@@ -46,57 +43,24 @@ class MapCanvas:
             self.canvas.itemconfigure(self.hair, state=HIDDEN)
 
     def _create_state(self, x, y):
+        state_tag = "state_%d" % self.state_node
         state_id = self.canvas.create_rectangle(self.canvas.coords(self.hair),
                                                 x,
                                                 y,
-                                                fill="grey",
-                                                tags=("state_%d" % self.state_node,))
-        self.state_node += 1
+                                                width=2,
+                                                tags=(state_tag,))
+        self.canvas.itemconfigure(state_id, fill="gray")
         # get ids of overlapped states
         ovl = self.canvas.find_overlapping(*self.canvas.coords(state_id))
 
         ovl = [self.canvas.itemcget(sid, "tags").split(" ")[0] for sid in ovl]
-        ovl = [tag for tag in ovl if tag.startswith("state_")]
-        print(ovl)
-
-    def generate_random_map(self):
-        self.clear()
-        # get canvas width and height
-        w = self.canvas.winfo_width() - 1
-        h = self.canvas.winfo_height() - 1
-        # draw background wrapping rectangle around drawing canvas and get its id
-        rect = self.canvas.create_rectangle(1, 1, w - 1, h - 1)
-        # create background node, which stands for the background rectangle and has edges to each node to be drawn
-        bg_node = Graph.ColorNode(rect)
-        self.graph.append(bg_node)
-        x0 = 1
-        yy0 = yy1 = prev_node = None
-        while 1:
-            x1 = x0 + MapCanvas.MIN_BOX_WIDTH + int(random.random()*w/8)
-            y0 = int(1 + random.random() * (h - MapCanvas.MIN_BOX_HEIGHT - 1))
-            y1 = y0 + MapCanvas.MIN_BOX_HEIGHT + int(random.random() * (h - y0 - MapCanvas.MIN_BOX_HEIGHT - 1))
-            if yy0 is not None:
-                if y1 < yy0:
-                    y1 = yy0 + int(random.random()*(yy1-yy0))
-                elif y0 > yy1:
-                    y0 = yy0 + int(random.random()*(yy1-yy0))
-            if x1 > w - MapCanvas.MIN_BOX_WIDTH:
-                x1 = w - 1
-            # draw random rectangle and bind graph node to it
-            rect = self.canvas.create_rectangle(x0, y0, x1, y1)
-            node = Graph.ColorNode(rect)
-            # add edge to background node
-            node.add_edge(bg_node)
-            # save node to graph
-            self.graph.append(node)
-            if prev_node is not None:
-                node.add_edge(prev_node)
-            if x1 == w - 1:
-                break
-            x0 = x1
-            yy0 = y0
-            yy1 = y1
-            prev_node = node
+        ovl = [tag for tag in ovl if tag.startswith("state_") and tag != state_tag]
+        print(ovl)      # debug
+        node = Graph.ColorNode(state_tag)
+        for tag in ovl:
+            node.add_edge(self.graph.get_node_by_id(tag))
+        self.graph.append(node)
+        self.state_node += 1
 
     def paint_map(self):
         self.graph.assign_colors()
@@ -104,12 +68,24 @@ class MapCanvas:
         for node in self.graph:
             print(node)
         for node in self.graph:
-            self.canvas.create_rectangle(self.canvas.coords(node.node_id), fill=node.color)
+            self.canvas.itemconfigure(node.node_id, fill=node.color)
+
+    def undo(self):
+        if self.state_node > 1:
+            self.state_node -= 1
+        node_id = "state_%d" % self.state_node
+        self.canvas.delete(node_id)
+        self.graph.remove(self.graph.get_node_by_id(node_id))
+        for n in self.graph:
+            print(n)
 
     def clear(self):
         # clear entire canvas drawing area and wipe out previous graph, if any
         self.canvas.delete("all")
         del self.graph[:]
+        self.state_node = 1
+        self.hair = self.canvas.create_image(0, 0, image=self.img_hair, state=HIDDEN)
+
 
 
 

@@ -42,20 +42,7 @@ class MapPanel:
               image=self.info_img,
               compound=LEFT,
               justify=LEFT,
-              anchor=W).grid(row=0, column=0, sticky=EW, pady=8, columnspan=2)
-
-        # btns
-        self.create = Button(form,
-                             width=10,
-                             command=self._generate_map,
-                             text="Create map")
-        self.create.grid(row=1, column=0, sticky=W, pady=8)
-        self.color = Button(form,
-                            width=10,
-                            command=self._color_canvas,
-                            text="Color map",
-                            state="disabled")
-        self.color.grid(row=1, column=1, stick=E)
+              anchor=W).grid(row=0, column=0, sticky=EW, pady=8, columnspan=3)
 
         canvasF = Frame(wrap, {"relief": SUNKEN, "border": 1})
         canvasF.grid({"pady": 8, "padx": 8, "row": 2, "column": 0, "sticky": NSEW})
@@ -63,6 +50,24 @@ class MapPanel:
         canvasF.grid_rowconfigure(0, weight=1)
         # create graph canvas
         self.canvas = MapCanvas.MapCanvas(canvasF)
+
+        # btns
+        self.clear_btn = Button(form,
+                                width=10,
+                                command=self.canvas.clear,
+                                text="Clear map")
+        self.clear_btn.grid(row=1, column=0, sticky=W, pady=8)
+        self.undo_btn = Button(form,
+                               width=10,
+                               command=self.canvas.undo,
+                               text="Undo last")
+        self.undo_btn.grid(row=1, column=1, sticky=W, pady=8)
+        self.color = Button(form,
+                            width=10,
+                            command=self._color_canvas,
+                            text="Color map",
+                            state="disabled")
+        self.color.grid(row=1, column=2, stick=E)
 
     def _generate_map(self):
         self.canvas.generate_random_map()

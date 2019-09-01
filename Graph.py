@@ -28,6 +28,16 @@ class Graph(list):
     def __init__(self):
         super(Graph, self).__init__()
 
+    def get_node_by_id(self, node_id):
+        for node in self:
+            if node.node_id == node_id:
+                return node
+        return None
+
+    def remove(self, node):
+        node.remove_edges()
+        super(Graph, self).remove(node)
+
     def assign_colors(self):
 
         # we need at least 2 nodes in graph if we want to paint them with different colors
@@ -62,16 +72,30 @@ class Node:
         return edge in self.edges
 
     # add edge to node
-    def add_edge(self, other):
+    def add_edge(self, other):              # other must be of type Node
         edge = self.Edge(self, other)
         if not self._has_edge(edge):
             self.edges.append(edge)
             other.add_edge(self)
 
-    # Nested class Edge to construct edge objects between Node instances
+    def remove_edges(self):
+        for edge in self.edges:
+            edge.n2.remove_edge(self)
+            self.edges.remove(edge)
+            self.remove_edges()
+
+    def remove_edge(self, node):            # remove edge to node 'node'
+        for edge in self.edges:
+            if edge.n2 == node:
+                self.edges.remove(edge)
+
+    def __eq__(self, other):                # other must be of type Node
+        return self.node_id == other.node_id
+
+    # Nested class Edge to construct (bidirectional) edge objects between Node instances
     class Edge:
 
-        def __init__(self, n1, n2):
+        def __init__(self, n1, n2):     # n1, n2 are Node objects
             self.n1 = n1
             self.n2 = n2
 
@@ -90,8 +114,8 @@ class ColorNode(Node):
 
     # std python overload to print node data for debugging
     def __str__(self):
-        ret = "node id: %d; color: %s ; has edges to nodes: " % (self.node_id, self.color)
-        ret += ", ".join([("%d" % edge.n2.node_id) for edge in self.edges])
+        ret = "node id: %s; color: %s ; has edges to nodes: " % (self.node_id, self.color)
+        ret += ", ".join([("%s" % edge.n2.node_id) for edge in self.edges])
         return ret
 
 
