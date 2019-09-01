@@ -28,6 +28,37 @@ class MapCanvas:
         self.canvas = Canvas(frame, background="white", cursor="tcross")
         self.canvas.grid(row=0, column=0, sticky=NSEW)
 
+        self.state_node = 1
+        self.img_hair = PhotoImage(file="crosshair16.png")
+        self.hair = self.canvas.create_image(0, 0, image=self.img_hair, state=HIDDEN)
+        self.canvas.bind("<1>", self._handle_canvas_click)
+
+    def _handle_canvas_click(self, event):
+        # if cross-hair hidden and user clicked on canvas -> just put cross-hair img on clicked coords and show it
+        if self.canvas.itemcget(self.hair, "state") == HIDDEN:
+            self.canvas.coords(self.hair, event.x, event.y)
+            self.canvas.itemconfigure(self.hair, state=NORMAL)
+            self.canvas.tag_raise(self.hair)
+        # if cross-hair shown -> create new retolandia state from cross-hair coords to clicked position
+        # and hide cross-hair img
+        else:
+            self._create_state(event.x, event.y)
+            self.canvas.itemconfigure(self.hair, state=HIDDEN)
+
+    def _create_state(self, x, y):
+        state_id = self.canvas.create_rectangle(self.canvas.coords(self.hair),
+                                                x,
+                                                y,
+                                                fill="grey",
+                                                tags=("state_%d" % self.state_node,))
+        self.state_node += 1
+        # get ids of overlapped states
+        ovl = self.canvas.find_overlapping(*self.canvas.coords(state_id))
+
+        ovl = [self.canvas.itemcget(sid, "tags").split(" ")[0] for sid in ovl]
+        ovl = [tag for tag in ovl if tag.startswith("state_")]
+        print(ovl)
+
     def generate_random_map(self):
         self.clear()
         # get canvas width and height
