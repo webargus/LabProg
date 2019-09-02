@@ -3,7 +3,7 @@
     UFRPE - BSI2019.2 - ILP - Homework 2
     Due date: 2019/09/06
     Description: Graph + Node + Edge classes to build and color user-defined map
-                 *** Coloring algorithm defined in method assign_colors of Graph class ***
+                 *** Welsh-Powell coloring algorithm defined in method assign_colors of Graph class ***
     Author:
         Edson Kropniczki - (c) sep/2019 - all rights reserved
     License:
@@ -13,7 +13,9 @@
         Use it at your own risk!
 
 *******************************************************************************************************
-    Web search references:
+    Web resources:
+        https://iq.opengenus.org/welsh-powell-algorithm
+        https://www.slideshare.net/PriyankJain26/graph-coloring-48222920
         https://en.wikipedia.org/wiki/Four_color_theorem
         https://en.wikipedia.org/wiki/Graph_coloring#Algorithms
         https://www.geeksforgeeks.org/graph-coloring-set-2-greedy-algorithm/
@@ -38,23 +40,50 @@ class Graph(list):
         node.remove_edges()
         super(Graph, self).remove(node)
 
+    ########################################################
+    #
+    #               Welsh-Powell algorithm
+    #
+    ########################################################
     def assign_colors(self):
 
         # shuffle colors just for fun
-        # random.shuffle(ColorNode.COLORS)
+        random.shuffle(ColorNode.COLORS)
+
+        # sort graph nodes in descending order from highest to lowest degree
+        self.sort(key=Node.degree, reverse=True)
 
         # assign colors to nodes
-        for node in self:
-            # try to pick an available color from color list
-            # available colors are colors which were not assigned to any node having an edge to this node
-            available_colors = [color for color in ColorNode.COLORS]
-            for edge in node.edges:
-                if edge.n2.color == available_colors[0]:
-                    available_colors = available_colors[1:]
-                if len(available_colors) == 0:
-                    print("Can't color map: not enough colors available")
-                    exit()
-            node.color = available_colors[0]
+        color_ix = 0
+        for node0 in self:
+            # go fetch next node from ordered graph if current node (node0) colored before
+            if node0.color is not None:
+                continue
+            # select next color in palette and assign it to current node
+            color = ColorNode.COLORS[color_ix]
+            node0.color = color
+            color_ix += 1
+            # Welsh-Powell algorithm key premise:
+            # Color with current color all uncolored nodes that have no edge to current node
+            # and in turn have no edge to any other node with current color.
+            # Scan graph for prospect nodes that meet key premise above:
+            for node1 in self:
+                # skip this prospect node if node already colored before
+                if node1.color is not None:
+                    continue
+                # skip current node or prospect nodes edging to it
+                if node1 == node0 or node0.has_edge_to(node1):
+                    continue
+                # skip prospect node if there is some other node edging to it and already colored with current color
+                if self._has_edge_to_node_with_color(node1, color):
+                    continue
+                node1.color = color
+
+    def _has_edge_to_node_with_color(self, node, color):
+        for n in self:
+            if n.color == color and n.has_edge_to(node):
+                return True
+        return False
 
 
 class Node:
@@ -62,6 +91,18 @@ class Node:
     def __init__(self, node_id):
         self.node_id = node_id              # save node id (label)
         self.edges = []                     # create blank list of edges
+
+    # find degree of node
+    @staticmethod
+    def degree(self):
+        return len(self.edges)
+
+    # check if this node edges another
+    def has_edge_to(self, other):            # other must be obj of type Node
+        for edge in self.edges:
+            if edge.n2 == other:
+                return True
+        return False
 
     # check if edge exists in this node
     def _has_edge(self, edge):
@@ -100,10 +141,11 @@ class Node:
             return (self.n1 == other.n1) and (self.n2 == other.n2)
 
 
-#   class ColorNode just adds color member to class Node
+#   class 'ColorNode' inherits from 'Node', defines static color pallet
+#   and conveniently includes handy member 'color'
 class ColorNode(Node):
 
-    COLORS = ["yellow", "green", "blue", "orange", "red", "cyan", "white"]
+    COLORS = ["yellow", "green", "blue", "orange", "red", "cyan", "magenta"]
 
     def __init__(self, node_id):
         super(ColorNode, self).__init__(node_id)

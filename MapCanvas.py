@@ -69,9 +69,6 @@ class MapCanvas:
 
     def paint_map(self):
         self.graph.assign_colors()
-        # debugging:
-        for node in self.graph:
-            print(node)
         for node in self.graph:
             self.canvas.itemconfigure(node.node_id, fill=node.color)
 
