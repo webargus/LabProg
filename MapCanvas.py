@@ -27,9 +27,14 @@ class MapCanvas:
         self.state_node = 1
         self.img_hair = PhotoImage(file="crosshair16.png")
         self.hair = self.canvas.create_image(0, 0, image=self.img_hair, state=HIDDEN)
+
+        self.enabled = True
         self.canvas.bind("<1>", self._handle_canvas_click)
 
     def _handle_canvas_click(self, event):
+        # abort if map colored
+        if not self.enabled:
+            return
         # if cross-hair hidden and user clicked on canvas -> just put cross-hair img on clicked coords and show it
         if self.canvas.itemcget(self.hair, "state") == HIDDEN:
             self.canvas.coords(self.hair, event.x, event.y)
@@ -67,6 +72,7 @@ class MapCanvas:
         self.state_node += 1
 
     def paint_map(self):
+        self.enabled = False                            # disable map editing
         self.graph.assign_colors()
         for node in self.graph:
             self.canvas.itemconfigure(node.node_id, fill=node.color)
@@ -88,6 +94,7 @@ class MapCanvas:
         del self.graph[:]
         self.state_node = 1
         self.hair = self.canvas.create_image(0, 0, image=self.img_hair, state=HIDDEN)
+        self.enabled = True                     # enable map editing
 
 
 
