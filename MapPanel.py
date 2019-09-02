@@ -23,17 +23,20 @@ class MapPanel:
 
         header = Frame(wrap)
         header.grid({"row": 0, "column": 0, "sticky": NSEW})
-        l1 = Label(header, {"text": "Map coloring based on the graph greedy coloring algorithm",
-                            "font": ("Arial", 12)})
+        l1 = Label(header, {"text": "Map coloring based on the Welsh-Powell algorithm",
+                            "font": ("Arial", 12),
+                            "pady": 4,
+                            "padx": 4})
         l1.grid({"row": 0, "column": 0})
 
-        form = Frame(wrap, {"pady": 8, "padx": 8})
+        form = Frame(wrap, {"pady": 4, "padx": 8})
         form.grid({"row": 1, "column": 0, "sticky": NSEW, "pady": 8, "padx": 8})
         form.grid_columnconfigure(0, weight=1)
 
-        text = " How to build a Retolandia map with rectangles:\n"
-        text += " 1. Click on the map area to stick a 1st State border vertex.\n"
-        text += " 2. Click again on map area to build a State between both marks.\n"
+        text = " Hints to build a proper Retolandia map with rectangles:\n"
+        text += " 1. Click on the map area to stick an initial State border vertex.\n"
+        text += " 2. Click on map area again to build a State between both marks.\n"
+        text += " 3. Try to build maps by intercepting adjacent rectangles in sequence.\n"
         self.info_img = PhotoImage(file="info24.png")
         Label(form,
               relief=SUNKEN,
