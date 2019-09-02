@@ -7,7 +7,6 @@
     License:
         just keep this header in your copy and feel free to mess up with this code as you please;
         source code also publicly available at https://github.com/webargus/LabProg;
-        actually, accretions and improvements are more than welcome! :)
     Disclaimer:
         Use it at your own risk!
 """
