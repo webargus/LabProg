@@ -40,7 +40,7 @@ class MapCanvas:
             self.canvas.coords(self.hair, event.x, event.y)
             self.canvas.itemconfigure(self.hair, state=NORMAL)
             self.canvas.tag_raise(self.hair)
-        # if cross-hair shown -> create new retolandia state from cross-hair coords to clicked position
+        # if cross-hair shown -> create new retonia state from cross-hair coords to clicked position
         # and hide cross-hair img
         else:
             self._create_state(event.x, event.y)
@@ -73,9 +73,10 @@ class MapCanvas:
 
     def paint_map(self):
         self.enabled = False                            # disable map editing
-        self.graph.assign_colors()
+        n_colors = self.graph.assign_colors()
         for node in self.graph:
             self.canvas.itemconfigure(node.node_id, fill=node.color)
+        return n_colors
 
     def undo(self):
         if len(self.graph) == 0:

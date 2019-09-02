@@ -3,10 +3,12 @@
     UFRPE - BSI2019.2
     Author: Edson Kropniczki
     Description: GUI for drawing simple random maps
+
 """
 
 from tkinter import *
 import MapCanvas
+from tkinter import messagebox as mb
 
 
 class MapPanel:
@@ -33,7 +35,7 @@ class MapPanel:
         form.grid({"row": 1, "column": 0, "sticky": NSEW, "pady": 8, "padx": 8})
         form.grid_columnconfigure(0, weight=1)
 
-        text = " Hints to build a proper Retolandia map with rectangles:\n"
+        text = " Hints to build a proper Retônia map with rectangles:\n"
         text += " 1. Click on the map area to stick an initial State border vertex.\n"
         text += " 2. Click on map area again to build a State between both marks.\n"
         text += " 3. Try to build maps by intercepting adjacent rectangles in sequence.\n"
@@ -75,9 +77,10 @@ class MapPanel:
         # we need at least 1 state to color map
         if len(self.canvas.graph) < 1:
             return
-        self.canvas.paint_map()
         self.colorize_btn.configure(state="disabled")
         self.undo_btn.configure(state="disabled")
+        n_colors = self.canvas.paint_map()
+        mb.showwarning("Welsh-Powell", "No. of colors used: %d colors" % n_colors)
 
     def _clear_map(self):
         self.canvas.clear()

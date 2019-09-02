@@ -3,7 +3,10 @@
     UFRPE - BSI2019.2 - ILP - Homework 2
     Due date: 2019/09/06
     Description: Graph + Node + Edge classes to build and color user-defined map
-                 *** Welsh-Powell coloring algorithm defined in method assign_colors of Graph class ***
+    ***************************************************************************************************
+             Core algorithm of exercise: please, refer to the Welsh-Powell coloring algorithm
+             implemented in method 'assign_colors' of  class 'Graph' below!
+    ***************************************************************************************************
     Author:
         Edson Kropniczki - (c) sep/2019 - all rights reserved
     License:
@@ -56,28 +59,28 @@ class Graph(list):
         # assign colors to nodes
         color_ix = 0
         for node0 in self:
-            # go fetch next node from ordered graph if current node (node0) colored before
+            # go fetch next node from ordered graph if current node (node0) already colored before
             if node0.color is not None:
                 continue
             # select next color in palette and assign it to current node
             color = ColorNode.COLORS[color_ix]
             node0.color = color
             color_ix += 1
-            # Welsh-Powell algorithm key premise:
-            # Color with current color all uncolored nodes that have no edge to current node
-            # and in turn have no edge to any other node with current color.
-            # Scan graph for prospect nodes that meet key premise above:
+            # Welsh-Powell algorithm key premises:
+            # Paint with current color all uncolored nodes that have no edge to current node
+            # and which in turn have no edge to any other node colored with current color.
+            # Scan graph for prospect nodes that might meet key premises above:
             for node1 in self:
-                # skip this prospect node if node already colored before
-                if node1.color is not None:
+                # skip this prospect node if node already colored before,
+                # or when we happen to be scanning current node or when prospect node has edges to it,
+                # or when there is some other node edging to prospect node, which has been
+                # already colored with current color
+                if (node1.color is not None) or (node1 == node0) or \
+                        node0.has_edge_to(node1) or self._has_edge_to_node_with_color(node1, color):
                     continue
-                # skip current node or prospect nodes edging to it
-                if node1 == node0 or node0.has_edge_to(node1):
-                    continue
-                # skip prospect node if there is some other node edging to it and already colored with current color
-                if self._has_edge_to_node_with_color(node1, color):
-                    continue
+                # once our prospect node has met all premises, we can safely color it
                 node1.color = color
+        return color_ix         # return no. of colors used to color graph
 
     def _has_edge_to_node_with_color(self, node, color):
         for n in self:
@@ -104,25 +107,22 @@ class Node:
                 return True
         return False
 
-    # check if edge exists in this node
-    def _has_edge(self, edge):
-        return edge in self.edges
-
     # add edge to node
     def add_edge(self, other):              # other must be of type Node
         edge = self.Edge(self, other)
-        if not self._has_edge(edge):
+        if edge not in self.edges:
             self.edges.append(edge)
             other.add_edge(self)
 
-    # remove edges of this node; needed when undoing map
+    # remove edges of this node; needed only when undoing GUI map
     def remove_edges(self):
         for edge in self.edges:
             edge.n2.remove_edge(self)
             self.edges.remove(edge)
             self.remove_edges()
 
-    def remove_edge(self, node):            # remove edge to node 'node'
+    # remove edge to node 'node'; needed only when undoing user GUI map input
+    def remove_edge(self, node):
         for edge in self.edges:
             if edge.n2 == node:
                 self.edges.remove(edge)
