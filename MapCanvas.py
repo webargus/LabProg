@@ -12,6 +12,8 @@
 """
 
 from tkinter import *
+from tkinter import messagebox as mb
+import datetime
 import Graph
 
 
@@ -73,10 +75,16 @@ class MapCanvas:
 
     def paint_map(self):
         self.enabled = False                            # disable map editing
+        init = datetime.datetime.now()
         n_colors = self.graph.assign_colors()
+        end = datetime.datetime.now()
         for node in self.graph:
             self.canvas.itemconfigure(node.node_id, fill=node.color)
-        return n_colors
+        report = "%d vertices colored in %.d microseconds using %d colors" % (len(self.graph),
+                                                                       (end - init).microseconds,
+                                                                       n_colors)
+        mb.showwarning("Welsh-Powell", report)
+        return
 
     def undo(self):
         if len(self.graph) == 0:

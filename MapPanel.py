@@ -79,8 +79,7 @@ class MapPanel:
             return
         self.colorize_btn.configure(state="disabled")
         self.undo_btn.configure(state="disabled")
-        n_colors = self.canvas.paint_map()
-        mb.showwarning("Welsh-Powell", "No. of colors used: %d colors" % n_colors)
+        self.canvas.paint_map()
 
     def _clear_map(self):
         self.canvas.clear()
