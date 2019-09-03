@@ -52,7 +52,7 @@ class Gui(Frame):
 
         ftop = Frame(frame)
         ftop.grid({"row": 0, "column": 0})
-        text = "NOTICE: This is just a standard tkinter Graphical User Interface reusable template developed just"
+        text = "NOTICE: This is a simple standard tkinter Graphical User Interface reusable template developed just"
         text += " with the sole purpose of facilitating user input in a graphical manner, when testing exercise "
         text += "assignments from the UFRPE Programming Lab subject program, as opposed to the otherwise "
         text += "far less efficient console-based user input methods. All exercise source codes come in separated "
