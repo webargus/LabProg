@@ -80,10 +80,10 @@ class MapCanvas:
         end = datetime.datetime.now()
         for node in self.graph:
             self.canvas.itemconfigure(node.node_id, fill=node.color)
-        report = "%d vertices colored in %.d microseconds using %d colors" % (len(self.graph),
-                                                                       (end - init).microseconds,
-                                                                       n_colors)
-        mb.showwarning("Welsh-Powell", report)
+        report = "%d vertices colored in " % len(self.graph)
+        report += "%f seconds" % (end-init).total_seconds()
+        report += " using %d colors" % n_colors
+        mb.showwarning("Welsh-Powell Report", report)
         return
 
     def undo(self):
