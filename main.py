@@ -49,7 +49,29 @@ class Gui(Frame):
         frame.grid({"row": 0, "column": 1, "sticky": NSEW, "pady": 4, "padx": 4})
         frame.grid_rowconfigure(0, weight=1)
         frame.grid_columnconfigure(0, weight=1)
-        self.text_widget = ScrollableText.ScrollableText(frame)
+
+        ftop = Frame(frame)
+        ftop.grid({"row": 0, "column": 0})
+        text = "NOTICE: This is just a standard tkinter Graphical User Interface reusable template developed just"
+        text += " with the sole purpose of facilitating user input in a graphical manner, when testing exercise "
+        text += "assignments from the UFRPE Programming Lab subject program, as opposed to the otherwise "
+        text += "far less efficient console-based user input methods. All exercise source codes come in separated "
+        text += "*.py package files which then again come listed in the "
+        text += "text area section below just for the sake of easy reading and verification purposes.\n"
+        text += "Therefore, having said that, please bear in mind that only source codes exclusively listed in "
+        text += "the text area below "
+        text += "should matter when analysing the solutions herein proposed for the exercise assignments, "
+        text += "since the GUI code does not interfere in any ways or manners whatsoever with the exercise code "
+        text += "performance!"
+        Label(ftop,
+              text=text,
+              wraplength=500,
+              font=("Arial", 8),
+              relief=RIDGE,
+              padding=4).grid({"row": 0, "column": 0})
+        fbottom = Frame(frame)
+        fbottom.grid({"row": 1, "column": 0, "sticky": NSEW})
+        self.text_widget = ScrollableText.ScrollableText(fbottom)
 
         self.mainloop()
 
@@ -60,6 +82,7 @@ class Gui(Frame):
         except OSError:
             print(OSError.args)
         self.text_widget.clear()
+        self.text_widget.append_text("# Source file: %s\n" % file)
         for line in handle.readlines():
             self.text_widget.append_text(line)
         handle.close()
