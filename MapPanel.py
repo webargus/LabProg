@@ -39,6 +39,7 @@ class MapPanel:
         text += " 1. Click on the map area to stick an initial State border 'landmark'.\n"
         text += " 2. Click on map area again to build a State (vertex) between marks.\n"
         text += " 3. Try to build maps by drawing intercepting adjacent rectangles.\n"
+        text += " 4. Check updated graph input in bottom text area."
         self.info_img = PhotoImage(file="info24.png")
         Label(form,
               relief=SUNKEN,

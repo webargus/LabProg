@@ -54,7 +54,7 @@ class Gui(Frame):
         ftop.grid({"row": 0, "column": 0})
         text = "NOTICE: This is a rather simple, reusable hack of a standard tkinter Graphical User Interface template,"
         text += " geared towards facilitating user input in a graphical manner, when testing exercise assignments "
-        text += "from the UFRPE Programming Lab subject program, as opposed to some otherwise cumbersome and "
+        text += "from the UFRPE Programming Lab subject program, as opposed to the otherwise cumbersome and "
         text += "far less efficient console-based input methods. All core exercise source codes come in separated "
         text += "*.py package files which then again come listed in the "
         text += "text area section below just for the sake of easy reading and verification purposes.\n"
