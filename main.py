@@ -55,14 +55,14 @@ class Gui(Frame):
         text = "NOTICE: This is a rather simple, reusable hack of a standard tkinter Graphical User Interface template,"
         text += " geared towards facilitating user input in a graphical manner, when testing exercise assignments "
         text += "from the UFRPE Programming Lab subject program, as opposed to the otherwise cumbersome and "
-        text += "far less efficient console-based input methods. All core exercise source codes come in separated "
+        text += "far less efficient console-based input methods. All exercise source codes come in separated "
         text += "*.py package files which then again come listed in the "
         text += "text area section below just for the sake of easy reading and verification purposes.\n"
         text += "Therefore, having said that, please bear in mind that only source codes exclusively listed in "
         text += "the text area below "
         text += "should matter when analysing the solutions herein proposed for the exercise assignments, "
-        text += "since the GUI code does not interfere in any ways or manners whatsoever with the exercise core "
-        text += "code performance!"
+        text += "since the GUI code and the tkinter native code do not interfere in any ways or manners whatsoever "
+        text += "neither with the solution proposed, its complexity level, nor with the code structure of the exercise."
         Label(ftop,
               text=text,
               wraplength=500,

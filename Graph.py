@@ -25,23 +25,14 @@
         http://www.dharwadker.org/vertex_coloring/
 """
 
-import random
-
 
 class Graph(list):
 
+    # static color palette to paint graph vertices (nodes)
+    COLORS = ["yellow", "green", "blue", "orange", "red", "cyan", "magenta"]
+
     def __init__(self):
         super(Graph, self).__init__()
-
-    def get_node_by_id(self, node_id):
-        for node in self:
-            if node.node_id == node_id:
-                return node
-        return None
-
-    def remove(self, node):
-        node.remove_edges()
-        super(Graph, self).remove(node)
 
     ########################################################
     #
@@ -49,9 +40,6 @@ class Graph(list):
     #
     ########################################################
     def assign_colors(self):
-
-        # shuffle colors just for fun
-        random.shuffle(ColorNode.COLORS)
 
         # sort graph nodes in descending order from highest to lowest degree
         self.sort(key=Node.degree, reverse=True)
@@ -63,7 +51,7 @@ class Graph(list):
             if node0.color is not None:
                 continue
             # select next color in palette and assign it to current node
-            color = ColorNode.COLORS[color_ix]
+            color = self.COLORS[color_ix]
             node0.color = color
             color_ix += 1
             # Welsh-Powell algorithm key premises:
@@ -84,6 +72,7 @@ class Graph(list):
 
     def _has_edge_to_node_with_color(self, node, color):
         for n in self:
+            # check if color matches first and check edges only if color matches, for optimization in 'and' clause
             if n.color == color and n.has_edge_to(node):
                 return True
         return False
@@ -94,6 +83,7 @@ class Node:
     def __init__(self, node_id):
         self.node_id = node_id              # save node id (label)
         self.edges = []                     # create blank list of edges
+        self.color = None                   # assign no color to vertex as default color
 
     # find degree of node
     @staticmethod
@@ -114,19 +104,6 @@ class Node:
             self.edges.append(edge)
             other.add_edge(self)
 
-    # remove edges of this node; needed only when undoing GUI map
-    def remove_edges(self):
-        for edge in self.edges:
-            edge.n2.remove_edge(self)
-            self.edges.remove(edge)
-            self.remove_edges()
-
-    # remove edge to node 'node'; needed only when undoing user GUI map input
-    def remove_edge(self, node):
-        for edge in self.edges:
-            if edge.n2 == node:
-                self.edges.remove(edge)
-
     def __eq__(self, other):                # other must be of type Node
         return self.node_id == other.node_id
 
@@ -141,21 +118,6 @@ class Node:
             return (self.n1 == other.n1) and (self.n2 == other.n2)
 
 
-#   class 'ColorNode' inherits from 'Node', defines static color pallet
-#   and conveniently includes handy member 'color'
-class ColorNode(Node):
-
-    COLORS = ["yellow", "green", "blue", "orange", "red", "cyan", "magenta"]
-
-    def __init__(self, node_id):
-        super(ColorNode, self).__init__(node_id)
-        self.color = None
-
-    # std python overload to print node data for debugging
-    def __str__(self):
-        ret = "vertex id: %s; edges: " % self.node_id
-        ret += ", ".join([("%s" % edge.n2.node_id) for edge in self.edges])
-        return ret
 
 
 

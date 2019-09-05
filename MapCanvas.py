@@ -14,6 +14,7 @@
 from tkinter import *
 from tkinter import messagebox as mb
 import datetime
+import CanvasGraph
 import Graph
 
 
@@ -21,7 +22,7 @@ class MapCanvas:
 
     def __init__(self, frame, when_create_state=None):
 
-        self.graph = Graph.Graph()
+        self.graph = CanvasGraph.CanvasGraph()
 
         self.canvas = Canvas(frame, background="white", cursor="tcross")
         self.canvas.grid(row=0, column=0, sticky=NSEW)
@@ -51,11 +52,18 @@ class MapCanvas:
 
     def _create_state(self, x, y):
         state_tag = "state_%d" % self.state_node
-        state_id = self.canvas.create_rectangle(self.canvas.coords(self.hair),
+        (x0, y0) = self.canvas.coords(self.hair)
+        state_id = self.canvas.create_rectangle(x0,
+                                                y0,
                                                 x,
                                                 y,
                                                 width=2,
                                                 tags=(state_tag,))
+        self.canvas.create_text((x0+x)/2,
+                                (y0+y)/2,
+                                text=("%d" % self.state_node),
+                                font=("Arial", 8),
+                                tags=(("tag_txt_%d" % self.state_node),))
         self.canvas.itemconfigure(state_id, fill="gray")
         # get ids of overlapped states
         ovl = self.canvas.find_overlapping(*self.canvas.coords(state_id))
@@ -65,13 +73,13 @@ class MapCanvas:
         ovl = [tag for tag in ovl if tag.startswith("state_") and tag != state_tag]
         # print(ovl)      # debug
         # create graph color node with ID equal to latest (current) state tag...
-        node = Graph.ColorNode(state_tag)
+        node = CanvasGraph.CanvasNode(state_tag)
         # ... and add edges to node created, corresponding to the nodes it overlaps (border states)
         for tag in ovl:
             node.add_edge(self.graph.get_node_by_id(tag))
         # add node to graph
         self.graph.append(node)
-        # notify on node created
+        # notify caller on node created
         if self.when_create_state is not None:
             self.when_create_state(self.graph)
         # increment global vertex id
@@ -100,6 +108,7 @@ class MapCanvas:
         self.graph.remove(self.graph.get_node_by_id(node_id))
         '''for n in self.graph:         # debug
             print(n)'''
+        self.canvas.delete(("tag_txt_%d" % self.state_node))
 
     def clear(self):
         # clear entire canvas drawing area and wipe out previous graph, if any
