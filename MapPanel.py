@@ -96,7 +96,7 @@ class MapPanel:
 
     def _report_state_created(self, graph):
         self.text.clear()
-        self.text.append_text("Graph hack:\n")
+        self.text.append_text("Map graph input:\n")
         for vertex in graph:
             self.text.append_text(vertex)
             self.text.append_text("\n")
