@@ -8,7 +8,7 @@
 
 from tkinter import *
 import MapCanvas
-from tkinter import messagebox as mb
+import ScrollableText
 
 
 class MapPanel:
@@ -36,9 +36,9 @@ class MapPanel:
         form.grid_columnconfigure(0, weight=1)
 
         text = " Hints to build a proper Retônia map with rectangles:\n"
-        text += " 1. Click on the map area to stick an initial State border vertex.\n"
-        text += " 2. Click on map area again to build a State between both marks.\n"
-        text += " 3. Try to build maps by intercepting adjacent rectangles in sequence.\n"
+        text += " 1. Click on the map area to stick an initial State border 'landmark'.\n"
+        text += " 2. Click on map area again to build a State (vertex) between marks.\n"
+        text += " 3. Try to build maps by drawing intercepting adjacent rectangles.\n"
         self.info_img = PhotoImage(file="info24.png")
         Label(form,
               relief=SUNKEN,
@@ -53,8 +53,8 @@ class MapPanel:
         canvasF.grid({"pady": 8, "padx": 8, "row": 2, "column": 0, "sticky": NSEW})
         canvasF.grid_columnconfigure(0, weight=1)
         canvasF.grid_rowconfigure(0, weight=1)
-        # create graph canvas
-        self.canvas = MapCanvas.MapCanvas(canvasF)
+        # create map canvas
+        self.canvas = MapCanvas.MapCanvas(canvasF, self._report_state_created)
 
         # btns
         self.clear_btn = Button(form,
@@ -73,6 +73,13 @@ class MapPanel:
                                    text="Color map")
         self.colorize_btn.grid(row=1, column=2, stick=W)
 
+        text = Frame(wrap, {"pady": 8, "padx": 8})
+        text.grid({"row": 3, "column": 0, "sticky": NSEW})
+        text.grid_columnconfigure(0, weight=1)
+        # text.grid_rowconfigure(0, weight=1)
+        self.text = ScrollableText.ScrollableText(text)
+        self.text.configure(height=10)
+
     def _colorize_map(self):
         # we need at least 1 state to color map
         if len(self.canvas.graph) < 1:
@@ -85,8 +92,14 @@ class MapPanel:
         self.canvas.clear()
         self.colorize_btn.configure(state="normal")
         self.undo_btn.configure(state="normal")
+        self.text.clear()
 
-
+    def _report_state_created(self, graph):
+        self.text.clear()
+        self.text.append_text("Graph hack:\n")
+        for vertex in graph:
+            self.text.append_text(vertex)
+            self.text.append_text("\n")
 
 
 

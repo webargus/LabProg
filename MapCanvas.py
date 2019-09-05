@@ -19,14 +19,15 @@ import Graph
 
 class MapCanvas:
 
-    def __init__(self, frame):
+    def __init__(self, frame, when_create_state=None):
 
         self.graph = Graph.Graph()
 
         self.canvas = Canvas(frame, background="white", cursor="tcross")
         self.canvas.grid(row=0, column=0, sticky=NSEW)
 
-        self.state_node = 1
+        self.when_create_state = when_create_state      # callback function called after vertex (State) creation
+        self.state_node = 1                             # id of next graph state (vertex) to be created
         self.img_hair = PhotoImage(file="crosshair16.png")
         self.hair = self.canvas.create_image(0, 0, image=self.img_hair, state=HIDDEN)
 
@@ -70,7 +71,10 @@ class MapCanvas:
             node.add_edge(self.graph.get_node_by_id(tag))
         # add node to graph
         self.graph.append(node)
-        # increment global node index
+        # notify on node created
+        if self.when_create_state is not None:
+            self.when_create_state(self.graph)
+        # increment global vertex id
         self.state_node += 1
 
     def paint_map(self):

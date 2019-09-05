@@ -20,7 +20,7 @@ class Gui(Frame):
     def __init__(self):
         Frame.__init__(self)
         Tools.Tools.root(self.master)
-        Tools.Tools.center_window(self.master, 1120, 600)
+        Tools.Tools.center_window(self.master, 1120, 680)
         self.imgicon = PhotoImage(file='icon32.png')
         self.master.tk.call('wm', 'iconphoto', self.master._w, self.imgicon)
 
@@ -52,17 +52,17 @@ class Gui(Frame):
 
         ftop = Frame(frame)
         ftop.grid({"row": 0, "column": 0})
-        text = "NOTICE: This is a simple standard tkinter Graphical User Interface reusable template developed just"
-        text += " with the sole purpose of facilitating user input in a graphical manner, when testing exercise "
-        text += "assignments from the UFRPE Programming Lab subject program, as opposed to the otherwise "
-        text += "far less efficient console-based user input methods. All exercise source codes come in separated "
+        text = "NOTICE: This is a rather simple, reusable hack of a standard tkinter Graphical User Interface template,"
+        text += " geared towards facilitating user input in a graphical manner, when testing exercise assignments "
+        text += "from the UFRPE Programming Lab subject program, as opposed to some otherwise cumbersome and "
+        text += "far less efficient console-based input methods. All core exercise source codes come in separated "
         text += "*.py package files which then again come listed in the "
         text += "text area section below just for the sake of easy reading and verification purposes.\n"
         text += "Therefore, having said that, please bear in mind that only source codes exclusively listed in "
         text += "the text area below "
         text += "should matter when analysing the solutions herein proposed for the exercise assignments, "
-        text += "since the GUI code does not interfere in any ways or manners whatsoever with the exercise code "
-        text += "performance!"
+        text += "since the GUI code does not interfere in any ways or manners whatsoever with the exercise core "
+        text += "code performance!"
         Label(ftop,
               text=text,
               wraplength=500,

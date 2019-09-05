@@ -153,7 +153,7 @@ class ColorNode(Node):
 
     # std python overload to print node data for debugging
     def __str__(self):
-        ret = "node id: %s; color: %s ; has edges to nodes: " % (self.node_id, self.color)
+        ret = "vertex id: %s; edges: " % self.node_id
         ret += ", ".join([("%s" % edge.n2.node_id) for edge in self.edges])
         return ret
 
