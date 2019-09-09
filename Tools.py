@@ -10,6 +10,8 @@
         Use it at your own risk!
 """
 
+import datetime
+
 
 class Tools:
 
@@ -34,7 +36,18 @@ class Tools:
         win.geometry('{}x{}+{}+{}'.format(width, height, x, y))
 
 
+class Timer:
 
+    def __init__(self):
+        self.init = None
+        self.end = None
+
+    def start(self):
+        self.init = datetime.datetime.now()
+
+    def stop(self):
+        self.end = datetime.datetime.now()
+        return (self.end - self.init).total_seconds()
 
 
 

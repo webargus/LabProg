@@ -1,16 +1,5 @@
 
 import random
-"""
-while 1:
-    try:
-        n = int(input("Enter number of cities:"))
-        if (n < 2) or (n > 10000):
-            raise ValueError
-        else:
-            break
-    except ValueError:
-        print("Invalid input")
-"""
 
 class Graph(list):
 
@@ -73,9 +62,6 @@ class Graph(list):
         return paths
     
     def find_paths_breadth(self, v1, target):
-        for ix in range(self.n):
-            self[ix][ix] = 0
-        self[v1][v1] = 1
         stack = []
         path = [v1]
         stack.append(path)
