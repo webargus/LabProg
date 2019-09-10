@@ -50,16 +50,22 @@ class ShortestPathPanel:
         self.target = Entry(form, width=4, textvar=self.target_city)
         self.target.grid(row=2, column=1, columnspan=2, sticky=W)
 
+        self.verb = IntVar()
+        self.verbose = Checkbutton(form, text="Show paths", variable=self.verb, font=("Arial", 9))
+        self.verbose.grid(row=3, column=0, columnspan=3, sticky=W)
+
         self.btn_depth = Button(form,
                                 text="Apply depth first",
                                 command=self.__apply_depth_first,
-                                state="disabled")
-        self.btn_depth.grid(row=3, column=0, sticky=W)
+                                state="disabled",
+                                font=("Arial", 9))
+        self.btn_depth.grid(row=4, column=0, sticky=W, pady=8)
         self.btn_breadth = Button(form,
                                   text="Apply breadth first",
                                   command=self.__apply_breadth_first,
-                                  state="disabled")
-        self.btn_breadth.grid(row=3, column=1, sticky=E, columnspan=2, pady=32)
+                                  state="disabled",
+                                  font=("Arial", 9))
+        self.btn_breadth.grid(row=4, column=1, sticky=E, columnspan=2, pady=8)
 
         text = Frame(wrap, {"pady": 8, "padx": 8})
         text.grid({"row": 4, "column": 0, "sticky": NSEW})
@@ -133,9 +139,10 @@ class ShortestPathPanel:
         paths = self.graph.find_paths_depth(source, target)
         secs = timer.stop()
         self.text.append_text("DFS took %f seconds and returned %d possible paths\n" % (secs, len(paths)))
-        self.text.append_text("Paths from city %d to city %d:\n" % (source+1, target+1))
-        for path in paths:
-            self.text.append_text(" -> ".join([str(x + 1) for x in path]) + "\n")
+        if self.verb.get() == 1:
+            self.text.append_text("Paths from city %d to city %d:\n" % (source+1, target+1))
+            for path in paths:
+                self.text.append_text(" -> ".join([str(x + 1) for x in path]) + "\n")
         self.btn_depth.configure(state="normal")
         self.btn_breadth.configure(state="normal")
         self.gen_graph.configure(state="normal")
@@ -147,9 +154,10 @@ class ShortestPathPanel:
         paths = self.graph.find_paths_breadth(source, target)
         secs = timer.stop()
         self.text.append_text("BFS took %f seconds and returned %d possible paths\n" % (secs, len(paths)))
-        self.text.append_text("Paths from city %d to city %d:\n" % (source+1, target+1))
-        for path in paths:
-            self.text.append_text(" -> ".join([str(x + 1) for x in path]) + "\n")
+        if self.verb.get() == 1:
+            self.text.append_text("Paths from city %d to city %d:\n" % (source+1, target+1))
+            for path in paths:
+                self.text.append_text(" -> ".join([str(x + 1) for x in path]) + "\n")
         self.btn_depth.configure(state="normal")
         self.btn_breadth.configure(state="normal")
         self.gen_graph.configure(state="normal")
