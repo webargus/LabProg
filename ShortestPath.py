@@ -56,7 +56,7 @@ class Graph(list):
         for edge in self.get_edges(v1):
             # if edge not in path then we didn't scan it yet
             if edge[0] not in path:
-                pts = self.find_paths(edge[0], target, path)    # do search recursively until we hit our target
+                pts = self.find_paths_depth(edge[0], target, path)    # do search recursively until we hit our target
                 for pt in pts:
                     paths.append(pt)
         return paths

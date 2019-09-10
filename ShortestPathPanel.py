@@ -52,7 +52,7 @@ class ShortestPathPanel:
 
         self.btn_depth = Button(form,
                                 text="Apply depth first",
-                                command=self.__apply_breadth_first,
+                                command=self.__apply_depth_first,
                                 state="disabled")
         self.btn_depth.grid(row=3, column=0, sticky=W)
         self.btn_breadth = Button(form,
@@ -68,7 +68,6 @@ class ShortestPathPanel:
         self.text = ScrollableText.ScrollableText(text)
 
         self.graph = ShortestPath.Graph()
-        self.timer = Tools.Timer()
 
     def __gen_graph_matrix(self):
         try:
@@ -90,9 +89,10 @@ class ShortestPathPanel:
         thread.start()
 
     def __gen_matrix_thread(self, n):
-        self.timer.start()
+        timer = Tools.Timer()
+        timer.start()
         self.graph.generate_matrix(n)
-        secs = self.timer.stop()
+        secs = timer.stop()
         self.text.append_text("Graph generated in %f seconds.\n" % secs)
         if n < 21:
             self.text.append_text(self.graph.as_graph())
@@ -101,8 +101,17 @@ class ShortestPathPanel:
         self.btn_depth.configure(state="normal")
 
     def __apply_depth_first(self):
-        if not self.__validate_city_inputs():
+        params = self.__validate_city_inputs()
+        if params is None:
             return
+        (source, target) = params
+        self.btn_depth.configure(state="disabled")
+        self.btn_breadth.configure(state="disabled")
+        self.gen_graph.configure(state="disabled")
+
+        thread = Thread(target=self.__thread_depth_first, args=(source, target))
+        thread.daemon = True
+        thread.start()
 
     def __apply_breadth_first(self):
         params = self.__validate_city_inputs()
@@ -117,11 +126,30 @@ class ShortestPathPanel:
         thread.daemon = True
         thread.start()
 
+    def __thread_depth_first(self, source, target):
+        self.text.append_text("Searching depth first...\n")
+        timer = Tools.Timer()
+        timer.start()
+        paths = self.graph.find_paths_depth(source, target)
+        secs = timer.stop()
+        self.text.append_text("DFS took %f seconds and returned %d possible paths\n" % (secs, len(paths)))
+        self.text.append_text("Paths from city %d to city %d:\n" % (source+1, target+1))
+        for path in paths:
+            self.text.append_text(" -> ".join([str(x + 1) for x in path]) + "\n")
+        self.btn_depth.configure(state="normal")
+        self.btn_breadth.configure(state="normal")
+        self.gen_graph.configure(state="normal")
+
     def __thread_breadth_first(self, source, target):
-        self.text.append_text("BFS results:\n")
+        self.text.append_text("Searching breadth first...\n")
+        timer = Tools.Timer()
+        timer.start()
         paths = self.graph.find_paths_breadth(source, target)
-        self.text.append_text(paths)
-        print(paths)
+        secs = timer.stop()
+        self.text.append_text("BFS took %f seconds and returned %d possible paths\n" % (secs, len(paths)))
+        self.text.append_text("Paths from city %d to city %d:\n" % (source+1, target+1))
+        for path in paths:
+            self.text.append_text(" -> ".join([str(x + 1) for x in path]) + "\n")
         self.btn_depth.configure(state="normal")
         self.btn_breadth.configure(state="normal")
         self.gen_graph.configure(state="normal")
