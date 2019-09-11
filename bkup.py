@@ -45,6 +45,24 @@ class Graph(list):
                 edges.append((v1, edge))
         return edges
 
+    # Recursive depth-first search of target vertex beginning at vertex v1
+    """def find_paths_depth(self, v1, target, path=[]):
+        # print(v1, path)                   # debug
+        path = path + [v1]
+        # base case: we quit search when we hit our target
+        if v1 == target:
+            return [path]
+        paths = []
+        # print("paths=", paths)            # debug
+        # scan through all edges to current vertex
+        for edge in self.get_edges(v1):
+            # if edge not in path then we didn't scan it yet
+            if edge[0] not in path:
+                pts = self.find_paths_depth(edge[0], target, path)    # do search recursively until we hit our target
+                for pt in pts:
+                    paths.append(pt)
+        return paths
+        """
     def find_paths_depth(self, v1, target):
         stack = []
         path = [v1]
@@ -86,6 +104,19 @@ class Graph(list):
         return "\n" + ret + "\n"
 
     def as_graph(self):
+        """s = ""
+        for row in range(self.n-1):
+            s += "vertex %d: edges = [" % (row+1)
+            s += ", ".join([str(x) for x in
+                            ["%d:%d" % (y+1, self[row][y]) for y in range(row+1, self.n) if self[row][y] is not None]])
+            s += "]\n"
+
+        s = ""
+        for v1 in range(self.n):
+            s += "Vertex %d: edges = [" % (v1+1)
+            s += ", ".join(["%d:%d" % (v2+1, self[v1][v2]) for v2 in range(self.n) if self.edge(v1, v2) is not None])
+            s += "]\n"
+        """
         s = "Edge notation: X:Y, where X = target vertex and Y = distance (weight of edge)\n"
         for v1 in range(self.n):
             s += "Vertex %d: edges = [" % (v1+1)
@@ -94,6 +125,35 @@ class Graph(list):
             s += "]\n"
         return s
 
+"""
+graph = Graph(n)
+print(graph)
+print(graph.as_graph())
+
+while 1:
+    try:
+        source = int(input("Enter number of origin city (0=exit):"))
+        if source == 0:
+            exit(0)
+        if (source < 1) or (source > n):
+            raise ValueError
+        dest = int(input("Enter number of destination city (0=exit):"))
+        if dest == 0:
+            exit(0)
+        if dest == source:
+            print("Destination city can't be the same as origin city")
+            raise ValueError
+        print("Depth first:")
+        p = graph.find_paths(source - 1, dest - 1)
+        s = "path: " + "\npath: ".join([" -> ".join([str(x+1) for x in pt]) for pt in p])
+        print(s, "\n", "-"*30)
+        print("Breadth first:")
+        paths = graph.find_paths_breadth(source-1, dest-1)
+        for path in paths:
+            print(" -> ".join([str(x+1) for x in path]))
+    except ValueError:
+        print("Invalid input")
+"""
 
 
 

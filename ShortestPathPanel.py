@@ -55,13 +55,13 @@ class ShortestPathPanel:
         self.verbose.grid(row=3, column=0, columnspan=3, sticky=W)
 
         self.btn_depth = Button(form,
-                                text="Apply depth first",
+                                text="Depth First Search",
                                 command=self.__apply_depth_first,
                                 state="disabled",
                                 font=("Arial", 9))
         self.btn_depth.grid(row=4, column=0, sticky=W, pady=8)
         self.btn_breadth = Button(form,
-                                  text="Apply breadth first",
+                                  text="Breadth First Search",
                                   command=self.__apply_breadth_first,
                                   state="disabled",
                                   font=("Arial", 9))
@@ -101,6 +101,7 @@ class ShortestPathPanel:
         secs = timer.stop()
         self.text.append_text("Graph generated in %f seconds.\n" % secs)
         if n < 21:
+            self.text.append_text(self.graph.as_matrix())
             self.text.append_text(self.graph.as_graph())
         self.gen_graph.configure(state="normal")
         self.btn_breadth.configure(state="normal")

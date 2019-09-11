@@ -20,13 +20,13 @@ class Gui(Frame):
     def __init__(self):
         Frame.__init__(self)
         Tools.Tools.root(self.master)
-        Tools.Tools.center_window(self.master, 1120, 680)
+        Tools.Tools.center_window(self.master, 1280, 680)
         self.imgicon = PhotoImage(file='icon32.png')
         self.master.tk.call('wm', 'iconphoto', self.master._w, self.imgicon)
 
         self.master.resizable(0, 0)
         self.master.state('normal')
-        self.master.title("Laboratório de Programação - Trabalho 1' - SI2019.2")
+        self.master.title("Programming Lab' - SI2019.2")
         self.master.grid_rowconfigure(0, weight=1)
         self.master.grid_columnconfigure(0, weight=1)
         self.grid({"row": 0, "column": 0, "sticky": NSEW})
