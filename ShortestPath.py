@@ -1,4 +1,24 @@
 
+"""
+    UFRPE - BSI2019.2 - ILP - Homework 3
+    Due date: 2019/09/13
+    Description:
+        Class to generate random matrix graph and apply DFS, BFS and recursive methods to
+        find the shortest distance two different vertices
+        HIGHLIGHTS:
+        - Script takes advantage of idle matrix area below main diagonal to save shortest distance data
+        - Search result reports include time in secs each search method takes for same search for comparison purposes
+    Author:
+        Edson Kropniczki - (c) sep/2019 - all rights reserved
+    License:
+        just keep this header in your copy and feel free to mess up with this code as you please;
+        source code also publicly available at https://github.com/webargus/LabProg;
+    Disclaimer:
+        Use it at your own risk!
+
+*******************************************************************************************************
+"""
+
 import random
 from collections import deque
 

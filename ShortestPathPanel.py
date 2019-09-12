@@ -156,7 +156,7 @@ class ShortestPathPanel:
             for path in paths:
                 self.text.append_text(" -> ".join([str(x + 1) for x in path]) + "\n")
         (dist, path) = self.graph.calc_shortest(paths)
-        self.text.append_text("Shortest path: %d %s\n" % (dist, "[" + " -> ".join([str(x + 1) for x in path]) + "]"))
+        self.text.append_text("Shortest path: %d %s\n" % (dist, "[" + " -> ".join([str(x + 1) for x in path]) + "]\n"))
         self.__set_btn_states("normal")
 
     def __validate_city_inputs(self):
