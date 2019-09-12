@@ -65,7 +65,13 @@ class ShortestPathPanel:
                                   command=self.__apply_breadth_first,
                                   state="disabled",
                                   font=("Arial", 9))
-        self.btn_breadth.grid(row=4, column=1, sticky=E, columnspan=2, pady=8)
+        self.btn_breadth.grid(row=4, column=1, sticky=W, pady=8)
+        self.btn_recursive = Button(form,
+                                    text="Recursive Search",
+                                    command=self.__apply_recursive_search,
+                                    state="disabled",
+                                    font=("Arial", 9))
+        self.btn_recursive.grid(row=4, column=2, sticky=E, pady=8)
 
         text = Frame(wrap, {"pady": 8, "padx": 8})
         text.grid({"row": 4, "column": 0, "sticky": NSEW})
@@ -84,9 +90,7 @@ class ShortestPathPanel:
             messagebox.showerror("Shortest path",
                                  "Invalid input:\nEnter an integer between 2 and %d." % ShortestPathPanel.MAX_ARRAY_SIZE)
             return
-        self.gen_graph.configure(state="disabled")
-        self.btn_depth.configure(state="disabled")
-        self.btn_breadth.configure(state="disabled")
+        self.__set_btn_states("disabled")
         self.text.clear()
         self.text.append_text("Generating random %d X %d matrix...\n...this may take a while...\n" % (n, n))
         Tools.Tools.master.update_idletasks()
@@ -101,67 +105,59 @@ class ShortestPathPanel:
         secs = timer.stop()
         self.text.append_text("Graph generated in %f seconds.\n" % secs)
         if n < 21:
-            self.text.append_text(self.graph.as_matrix())
-            self.text.append_text(self.graph.as_graph())
-        self.gen_graph.configure(state="normal")
-        self.btn_breadth.configure(state="normal")
-        self.btn_depth.configure(state="normal")
+            self.text.append_text("\n" + self.graph.as_matrix() + "\n")
+            self.text.append_text("Edge notation: X:Y, where X = target vertex and Y = distance (weight of edge)\n")
+            self.text.append_text(self.graph.as_graph() + "\n")
+        self.__set_btn_states("normal")
 
     def __apply_depth_first(self):
-        params = self.__validate_city_inputs()
-        if params is None:
-            return
-        (source, target) = params
-        self.btn_depth.configure(state="disabled")
-        self.btn_breadth.configure(state="disabled")
-        self.gen_graph.configure(state="disabled")
-
-        thread = Thread(target=self.__thread_depth_first, args=(source, target))
-        thread.daemon = True
-        thread.start()
+        self.__apply_search(self.__thread_depth_first)
 
     def __apply_breadth_first(self):
+        self.__apply_search(self.__thread_breadth_first)
+
+    def __apply_recursive_search(self):
+        self.__apply_search(self.__thread_recursive_search)
+
+    def __apply_search(self, callback):
         params = self.__validate_city_inputs()
         if params is None:
             return
         (source, target) = params
-        self.btn_depth.configure(state="disabled")
-        self.btn_breadth.configure(state="disabled")
-        self.gen_graph.configure(state="disabled")
+        self.__set_btn_states("disabled")
 
-        thread = Thread(target=self.__thread_breadth_first, args=(source, target))
+        thread = Thread(target=callback, args=(source, target))
         thread.daemon = True
         thread.start()
 
     def __thread_depth_first(self, source, target):
-        self.text.append_text("Searching depth first...\n")
-        timer = Tools.Timer()
-        timer.start()
-        paths = self.graph.find_paths_depth(source, target)
-        secs = timer.stop()
-        self.text.append_text("DFS took %f seconds and returned %d possible paths\n" % (secs, len(paths)))
-        if self.verb.get() == 1:
-            self.text.append_text("Paths from city %d to city %d:\n" % (source+1, target+1))
-            for path in paths:
-                self.text.append_text(" -> ".join([str(x + 1) for x in path]) + "\n")
-        self.btn_depth.configure(state="normal")
-        self.btn_breadth.configure(state="normal")
-        self.gen_graph.configure(state="normal")
+        self.__thread("DFS", source, target)
 
     def __thread_breadth_first(self, source, target):
-        self.text.append_text("Searching breadth first...\n")
+        self.__thread("BFS", source, target)
+
+    def __thread_recursive_search(self, source, target):
+        self.__thread("Recursive search", source, target)
+
+    def __thread(self, script, source, target):
+        self.text.append_text("Starting %s thread...\n" % script)
         timer = Tools.Timer()
         timer.start()
-        paths = self.graph.find_paths_breadth(source, target)
+        if script == "DFS":
+            paths = self.graph.find_paths_depth(source, target)
+        elif script == "BFS":
+            paths = self.graph.find_paths_breadth(source, target)
+        else:
+            paths = self.graph.find_paths_recursive(source, target)
         secs = timer.stop()
-        self.text.append_text("BFS took %f seconds and returned %d possible paths\n" % (secs, len(paths)))
+        self.text.append_text("%s thread took %f seconds and returned %d possible paths\n" % (script, secs, len(paths)))
         if self.verb.get() == 1:
-            self.text.append_text("Paths from city %d to city %d:\n" % (source+1, target+1))
+            self.text.append_text("Paths from city %d to city %d:\n" % (source + 1, target + 1))
             for path in paths:
                 self.text.append_text(" -> ".join([str(x + 1) for x in path]) + "\n")
-        self.btn_depth.configure(state="normal")
-        self.btn_breadth.configure(state="normal")
-        self.gen_graph.configure(state="normal")
+        (dist, path) = self.graph.calc_shortest(paths)
+        self.text.append_text("Shortest path: %d %s\n" % (dist, "[" + " -> ".join([str(x + 1) for x in path]) + "]"))
+        self.__set_btn_states("normal")
 
     def __validate_city_inputs(self):
         try:
@@ -181,7 +177,11 @@ class ShortestPathPanel:
             return None
         return source-1, target-1
 
-
+    def __set_btn_states(self, state):
+        self.gen_graph.configure(state=state)
+        self.btn_breadth.configure(state=state)
+        self.btn_depth.configure(state=state)
+        self.btn_recursive.configure(state=state)
 
 
 

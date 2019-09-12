@@ -25,10 +25,11 @@ class Graph(list):
                 else:
                     l0[col] = None
             self.append(l0)
+        # fill matrix nodes below main diagonal with None,
+        # for we'll use this matrix area to save shortest distances between them
         for row in range(self.n):
-            for col in range(self.n):
-                if row != col:
-                    self[col][row] = self[row][col]
+            for col in range(row):
+                self[row][col] = None
 
     def edge(self, v1, v2):
         if v1 == v2:
@@ -79,14 +80,57 @@ class Graph(list):
                     queue.append(new_path)                      # include new path in breadth search
         return paths
 
+    def find_paths_recursive(self, v1, target, path=[]):
+        path = path + [v1]
+        # base case: we quit search when we hit our target
+        if v1 == target:
+            return [path]
+        paths = []
+        # scan through all edges to current vertex
+        for edge in self.get_edges(v1):
+            # if edge not in path then we didn't scan it yet
+            if edge[0] not in path:
+                pts = self.find_paths_recursive(edge[0], target, path)  # do search recursively until we hit our target
+                for pt in pts:
+                    paths.append(pt)
+        return paths
+
+    def calc_shortest(self, paths):
+        d = self.calc_distance(paths[0])
+        p = paths[0]
+        for path in paths:
+            dist = self.calc_distance(path)
+            if dist < d:
+                d = dist
+                p = path
+        return d, p
+
+    def calc_distance(self, path):
+        dist = 0
+        for ix in range(len(path)-1):
+            i = path[ix]
+            j = path[ix+1]
+            if i > j:
+                (i, j) = (j, i)
+            dist += self[i][j]
+        # save shortest distance to matrix at position identified by first and last vertex of path,
+        # which corresponds to origin and destination, respectively
+        i = path[0]
+        j = path[len(path) - 1]
+        if i < j:                   # swap coords to ensure we save distance into matrix area below main diagonal
+            (i, j) = (j, i)
+        if (self[i][j] is None) or (self[i][j] > dist):
+            self[i][j] = dist
+        return dist
+
     def as_matrix(self):
         ret = ""
         for row in range(self.n):
             ret += ",\t".join([str(x) for x in self[row]]) + "\n"
-        return "\n" + ret + "\n"
+        return ret
 
     def as_graph(self):
-        s = "Edge notation: X:Y, where X = target vertex and Y = distance (weight of edge)\n"
+        s = ""
         for v1 in range(self.n):
             s += "Vertex %d: edges = [" % (v1+1)
             edges = self.get_edges(v1)
