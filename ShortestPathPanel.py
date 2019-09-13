@@ -123,6 +123,11 @@ class ShortestPathPanel:
         params = self.__validate_city_inputs()
         if params is None:
             return
+        if self.graph.n > 12:
+            msg = "This might cause your system to become unstable, depending on your computing power!\n"
+            msg += "Be aware of potential stack overflow or memory out issues and continue at your own risk."
+            if not messagebox.askokcancel("Warning!", msg, icon=messagebox.WARNING):
+                return
         (source, target) = params
         self.__set_btn_states("disabled")
 
