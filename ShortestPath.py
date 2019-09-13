@@ -122,6 +122,8 @@ class Graph(list):
         return paths
 
     def calc_shortest(self, paths):
+        if len(paths) == 0:             # no paths found, abort
+            return "Infinite", "No path available"
         d = self.calc_distance(paths[0])
         p = paths[0]
         for path in paths:

@@ -158,10 +158,16 @@ class ShortestPathPanel:
         self.text.append_text("%s thread took %f seconds and returned %d possible paths\n" % (script, secs, len(paths)))
         if self.verb.get() == 1:
             self.text.append_text("Paths from city %d to city %d:\n" % (source + 1, target + 1))
-            for path in paths:
-                self.text.append_text(" -> ".join([str(x + 1) for x in path]) + "\n")
+            if len(paths) > 0:
+                for path in paths:
+                    self.text.append_text(" -> ".join([str(x + 1) for x in path]) + "\n")
+            else:
+                self.text.append_text("No path found\n")
         (dist, path) = self.graph.calc_shortest(paths)
-        self.text.append_text("Shortest path: %d %s\n" % (dist, "[" + " -> ".join([str(x + 1) for x in path]) + "]\n"))
+        try:
+            self.text.append_text("Shortest path: %d %s\n" % (dist, "[" + " -> ".join([str(x + 1) for x in path]) + "]\n"))
+        except:
+            self.text.append_text("Distance: %s, path: %s" % (dist, path))
         self.__set_btn_states("normal")
 
     def __validate_city_inputs(self):
