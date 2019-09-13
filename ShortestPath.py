@@ -3,11 +3,12 @@
     UFRPE - BSI2019.2 - ILP - Homework 3
     Due date: 2019/09/13
     Description:
-        Class to generate random matrix graph and apply DFS, BFS and recursive methods to
-        find the shortest distance two different vertices
+        Class to generate random matrix graph and apply Depth First Search (DFS), Breadth First Search (BFS)
+        and recursive methods to find the shortest distance between two different vertices
         HIGHLIGHTS:
+        - Use of matrices for graph data structures should boost performance when handling large data sets
         - Script takes advantage of idle matrix area below main diagonal to save shortest distance data
-        - Search result reports include time in secs each search method takes for same search for comparison purposes
+        - Search result reports include elapsed time in secs each search method takes, for comparison
     Author:
         Edson Kropniczki - (c) sep/2019 - all rights reserved
     License:
@@ -25,12 +26,13 @@ from collections import deque
 
 class Graph(list):
 
-    MAX_DIST = 100
+    MAX_DIST = 100                  # static max. distance between cities
 
     def __init__(self):
         super(Graph, self).__init__()
         self.n = 2
 
+    # generate random square matrix of size sz
     def generate_matrix(self, sz):
         del self[:]
         self.n = sz
@@ -46,7 +48,7 @@ class Graph(list):
                     l0[col] = None
             self.append(l0)
         # fill matrix nodes below main diagonal with None,
-        # for we'll use this matrix area to save shortest distances between them
+        # for we'll use this matrix area to save calculated shortest distances between cities
         for row in range(self.n):
             for col in range(row):
                 self[row][col] = None
@@ -55,7 +57,7 @@ class Graph(list):
         if v1 == v2:
             return None
         # use min and max python std funcs when fetching edge
-        # to ensure we consistently pick edge from above main diagonal of graph matrix
+        # to ensure we consistently pick edges exclusively from matrix area above main diagonal
         return self[min(v1, v2)][max(v1, v2)]
 
     def get_edges(self, v):
@@ -63,54 +65,58 @@ class Graph(list):
         for v1 in range(self.n):
             edge = self.edge(v1, v)
             if edge is not None:
-                edges.append((v1, edge))
+                edges.append(v1)
         return edges
 
+    # DFS, non-recursive method that returns all possible paths between 2 cities
     def find_paths_depth(self, v1, target):
+        # create stack to accumulate search paths deeper into graph structure and initialize it with root city
         stack = []
         path = [v1]
         stack.append(path)
-        paths = []
-        while len(stack) > 0:
-            path = stack.pop()
-            if path[len(path)-1] == target:
+        paths = []                                              # list to accumulate paths to target
+        while len(stack) > 0:                                   # repeat search until we visit all cities
+            path = stack.pop()                                  # retrieve path on top of stack (deep search)
+            if path[len(path)-1] == target:                     # save it if whenever we hit our target city
                 paths.append(path)
-            #
+            # move deeper into graph structure by adding paths to neighbor cities on top of search stack
             for edge in self.get_edges(path[len(path) - 1]):
-                if edge[0] not in path:
+                if edge not in path:
                     new_path = path[:]                          # copy path as a new one
-                    new_path.append(edge[0])                    # and add this edge to it
-                    stack.append(new_path)                      # include new path in breadth search
+                    new_path.append(edge)                    # and add this edge to it
+                    stack.append(new_path)                      # add new path to the top of the depth search stack
         return paths
 
     def find_paths_breadth(self, v1, target):
+        # create queue and initialize it with root city
         queue = deque([])
         path = [v1]
         queue.append(path)
-        paths = []
+        paths = []      # path accumulator
+        # repeat search until there is no more cities to visit
         while len(queue) > 0:
-            path = queue.popleft()
-            if path[len(path)-1] == target:
+            path = queue.popleft()                    # remove queue left-most path, as we're doing a breadth search
+            if path[len(path)-1] == target:           # save path whenever we hit our target
                 paths.append(path)
-            #
+            # add new cities to visited paths and push them on top of queue for searching
             for edge in self.get_edges(path[len(path) - 1]):
-                if edge[0] not in path:
+                if edge not in path:
                     new_path = path[:]                          # copy path as a new one
-                    new_path.append(edge[0])                    # and add this edge to it
+                    new_path.append(edge)                    # and add this edge to it
                     queue.append(new_path)                      # include new path in breadth search
         return paths
 
     def find_paths_recursive(self, v1, target, path=[]):
         path = path + [v1]
-        # base case: we quit search when we hit our target
+        # base case: we quit searching when we hit our target
         if v1 == target:
             return [path]
         paths = []
         # scan through all edges to current vertex
         for edge in self.get_edges(v1):
             # if edge not in path then we didn't scan it yet
-            if edge[0] not in path:
-                pts = self.find_paths_recursive(edge[0], target, path)  # do search recursively until we hit our target
+            if edge not in path:
+                pts = self.find_paths_recursive(edge, target, path)  # do search recursively until we hit our target
                 for pt in pts:
                     paths.append(pt)
         return paths
@@ -134,7 +140,7 @@ class Graph(list):
                 (i, j) = (j, i)
             dist += self[i][j]
         # save shortest distance to matrix at position identified by first and last vertex of path,
-        # which corresponds to origin and destination, respectively
+        # which corresponds to origin and destination cities, respectively
         i = path[0]
         j = path[len(path) - 1]
         if i < j:                   # swap coords to ensure we save distance into matrix area below main diagonal
@@ -143,19 +149,21 @@ class Graph(list):
             self[i][j] = dist
         return dist
 
-    def as_matrix(self):
-        ret = ""
+    def as_matrix(self):                    # return graph in raw matrix format for printing
+        s = ""
         for row in range(self.n):
-            ret += ",\t".join([str(x) for x in self[row]]) + "\n"
-        return ret
+            s += ",\t".join([str(x) for x in self[row]]) + "\n"
+        return s
 
+    # return graph in Vertex X: edges = [Y1:distance_, ..., Yn: distance_n] format for printing
     def as_graph(self):
         s = ""
         for v1 in range(self.n):
-            s += "Vertex %d: edges = [" % (v1+1)
             edges = self.get_edges(v1)
-            s += ", ".join(["%d:%d" % (v2+1, dist) for v2, dist in edges])
-            s += "]\n"
+            if len(edges) > 0:
+                s += "Vertex %d: edges = [" % (v1+1)
+                s += ", ".join(["%d:%d" % (v2+1, self[min(v1, v2)][max(v1, v2)]) for v2 in edges])
+                s += "]\n"
         return s
 
 

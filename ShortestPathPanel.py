@@ -104,7 +104,7 @@ class ShortestPathPanel:
         self.graph.generate_matrix(n)
         secs = timer.stop()
         self.text.append_text("Graph generated in %f seconds.\n" % secs)
-        if n < 21:
+        if n < 10:
             self.text.append_text("\n" + self.graph.as_matrix() + "\n")
             self.text.append_text("Edge notation: X:Y, where X = target vertex and Y = distance (weight of edge)\n")
             self.text.append_text(self.graph.as_graph() + "\n")
