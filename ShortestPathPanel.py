@@ -167,7 +167,7 @@ class ShortestPathPanel:
         try:
             self.text.append_text("Shortest path: %d %s\n" % (dist, "[" + " -> ".join([str(x + 1) for x in path]) + "]\n"))
         except:
-            self.text.append_text("Distance: %s, path: %s" % (dist, path))
+            self.text.append_text("Distance: %s, path: %s\n" % (dist, path))
         self.__set_btn_states("normal")
 
     def __validate_city_inputs(self):
