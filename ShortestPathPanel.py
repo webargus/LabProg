@@ -37,41 +37,55 @@ class ShortestPathPanel:
         self.no = StringVar()
         self.n_cities = Entry(form, width=4, textvar=self.no)
         self.n_cities.grid(row=0, column=1, sticky=W)
-        self.gen_graph = Button(form, text="Generate graph", command=self.__gen_graph_matrix)
-        self.gen_graph.grid(row=0, column=2)
+        self.gen_graph = Button(form,
+                                text="Generate graph",
+                                command=self.__gen_graph_matrix,
+                                font=("Arial", 9),
+                                width=12)
+        self.gen_graph.grid(row=0, column=2, columnspan=2, sticky=E)
 
         Label(form, text="Start city:", font=("Arial", 9)).grid(row=1, column=0, sticky=W)
         self.start_city = StringVar()
         self.source = Entry(form, width=4, textvar=self.start_city)
-        self.source.grid(row=1, column=1, columnspan=2, sticky=W)
+        self.source.grid(row=1, column=1, columnspan=3, sticky=W)
 
         Label(form, text="Target city:", font=("Arial", 9)).grid(row=2, column=0, sticky=W)
         self.target_city = StringVar()
         self.target = Entry(form, width=4, textvar=self.target_city)
-        self.target.grid(row=2, column=1, columnspan=2, sticky=W)
+        self.target.grid(row=2, column=1, columnspan=3, sticky=W)
 
         self.verb = IntVar()
         self.verbose = Checkbutton(form, text="Show paths", variable=self.verb, font=("Arial", 9))
-        self.verbose.grid(row=3, column=0, columnspan=3, sticky=W)
+        self.verbose.grid(row=3, column=0, columnspan=4, sticky=W)
 
         self.btn_depth = Button(form,
-                                text="Depth First Search",
+                                text="Depth First",
                                 command=self.__apply_depth_first,
                                 state="disabled",
-                                font=("Arial", 9))
-        self.btn_depth.grid(row=4, column=0, sticky=W, pady=8)
+                                font=("Arial", 9),
+                                width=12)
+        self.btn_depth.grid(row=4, column=0, sticky=E, pady=8)
         self.btn_breadth = Button(form,
-                                  text="Breadth First Search",
+                                  text="Breadth First",
                                   command=self.__apply_breadth_first,
                                   state="disabled",
-                                  font=("Arial", 9))
+                                  font=("Arial", 9),
+                                  width=12)
         self.btn_breadth.grid(row=4, column=1, sticky=W, pady=8)
         self.btn_recursive = Button(form,
                                     text="Recursive Search",
                                     command=self.__apply_recursive_search,
                                     state="disabled",
-                                    font=("Arial", 9))
-        self.btn_recursive.grid(row=4, column=2, sticky=E, pady=8)
+                                    font=("Arial", 9),
+                                    width=12)
+        self.btn_recursive.grid(row=4, column=2, sticky=W, pady=8)
+        self.btn_dijkstra = Button(form,
+                                   text="Dijkstra",
+                                   command=self.__apply_dijkstra,
+                                   state="disabled",
+                                   font=("Arial", 9),
+                                   width=12)
+        self.btn_dijkstra.grid(row=4, column=3, sticky=W, pady=8)
 
         text = Frame(wrap, {"pady": 8, "padx": 8})
         text.grid({"row": 4, "column": 0, "sticky": NSEW})
@@ -118,6 +132,9 @@ class ShortestPathPanel:
 
     def __apply_recursive_search(self):
         self.__apply_search(self.__thread_recursive_search)
+
+    def __apply_dijkstra(self):
+        pass
 
     def __apply_search(self, callback):
         params = self.__validate_city_inputs()

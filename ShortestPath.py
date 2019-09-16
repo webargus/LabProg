@@ -38,7 +38,7 @@ class Graph(list):
         self.n = sz
         line = []
         for i in range(self.n):
-            line.append(0)
+            line.append(None)
         for row in range(self.n):
             l0 = line[:]
             for col in range(row+1, self.n):
@@ -49,9 +49,10 @@ class Graph(list):
             self.append(l0)
         # fill matrix nodes below main diagonal with None,
         # for we'll use this matrix area to save calculated shortest distances between cities
-        for row in range(self.n):
+        # 'None' here stands for Dijkstra's algorithm infinity mark
+        '''for row in range(self.n):
             for col in range(row):
-                self[row][col] = None
+                self[row][col] = None'''
 
     def edge(self, v1, v2):
         if v1 == v2:
@@ -67,6 +68,46 @@ class Graph(list):
             if edge is not None:
                 edges.append(v1)
         return edges
+
+    def get_edge_distance(self, v1, v2):
+        return self[min(v1, v2)][max(v1, v2)]
+
+    def dijkstra(self, v1, target):
+        # Fill in list with vertex ids, which is necessary to mark vertices as visited as we sift through graph;
+        # we're going to mark visited nodes replacing them with 'None' instead of removing
+        # them from list, which is a way more costly operation in python
+        unvisited = [vertex for vertex in range(self.n)]
+        # here we'll be saving Dijkstra's optimal distances along the matrix main diagonal,
+        # so we make a proper use of that idle memory section
+        for ix in range(self.n):
+            self[ix][ix] = None         # a 'None' value here means infinity in our algorithm version
+        # start by assigning 0 for the distance from start vertex
+        self[v1][v1] = 0
+        # set current city to start vertex
+        current = v1
+        while current is not None:
+            # check each neighbor of current city
+            for neighbor in self.get_edges(current):
+                dist_from_current = self[current][current] + self.get_edge_distance(neighbor, current)
+                if dist_from_current < self[neighbor][neighbor]:
+                    self[neighbor][neighbor] = dist_from_current
+            # mark current node as visited (None) in unvisited list, for we won't visit it again
+            unvisited[current] = None
+            # abort when we hit the target city
+            if current == target:
+                break
+            # before we loop back, take the next unvisited city with the shortest distance
+            # so far from origin vertex, for our current city
+            try:
+                # get shortest distance among unvisited cities
+                shortest = min(self[x][x] for x in unvisited if unvisited[x] is not None)
+                # do the reverse thing to get the vertex
+                current = [x for x in unvisited if self[x][x] == shortest][0]
+            except ValueError:
+                # catch case where current vertex has no edges do other vertices, which makes target unreachable,
+                # i.e., when we got only infinite distances (None values) for all unvisited cities
+                current = None
+
 
     # DFS, non-recursive method that returns all possible paths between 2 cities
     def find_paths_depth(self, v1, target):
