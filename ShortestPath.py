@@ -1,13 +1,14 @@
 
 """
     UFRPE - BSI2019.2 - ILP - Homework 3
-    Due date: 2019/09/13
+    Due date: 2019/09/20
     Description:
-        Class to generate random matrix graph and apply Depth First Search (DFS), Breadth First Search (BFS)
-        and recursive methods to find the shortest distance between two different vertices
+        Class to generate random matrix graph and apply Depth First Search (DFS), Breadth First Search (BFS)9+9
+        Dijkstra algorithm and recursive methods to find the shortest distance between two different vertices
         HIGHLIGHTS:
-        - Use of matrices for graph data structures should boost performance when handling large data sets
+        - Using matrices as a graph data structure should boost performance when handling large data sets
         - Script takes advantage of idle matrix area below main diagonal to save shortest distance data
+        - Script uses matrix idle main diagonal to store distance values when finding shortest path with Dijkstra
         - Search result reports include elapsed time in secs each search method takes, for comparison
     Author:
         Edson Kropniczki - (c) sep/2019 - all rights reserved
