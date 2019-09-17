@@ -173,6 +173,10 @@ class ShortestPathPanel:
             dist = "Infinite"
         else:
             dist = str(dist)
+        weights = []
+        for ix in range(len(path) - 1):
+            weights.append("%d -> %d : %d" % (path[ix]+1, path[ix+1]+1, self.graph[min(path[ix], path[ix+1])][max(path[ix], path[ix+1])]))
+        self.text.append_text(", ".join(s for s in weights) + "\n")
         self.text.append_text("Shortest path: %s %s\n" % (dist, "[" + " -> ".join(["%d" % (p+1) for p in path]) + "]\n"))
         # self.text.append_text(self.graph.as_matrix()+"\n")        # Debugging
         self.__set_btn_states("normal")

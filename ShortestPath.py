@@ -3,7 +3,7 @@
     UFRPE - BSI2019.2 - ILP - Homework 3
     Due date: 2019/09/20
     Description:
-        Class to generate random matrix graph and apply Depth First Search (DFS), Breadth First Search (BFS)9+9
+        Class to generate random matrix graph and apply Depth First Search (DFS), Breadth First Search (BFS),
         Dijkstra algorithm and recursive methods to find the shortest distance between two different vertices
         HIGHLIGHTS:
         - Using matrices as a graph data structure should boost performance when handling large data sets
@@ -75,11 +75,10 @@ class Graph(list):
         # in search of our target city, so that we'll be able to rebuild the full path from source to target later
         paths = {}
         # Fill in list with vertex ids, which is necessary to mark vertices as visited as we sift through graph;
-        # we're going to mark visited nodes replacing them with 'None' instead of removing
+        # we're going to mark visited nodes with 'None' instead of removing
         # them from list, which is a way more costly operation in python
         unvisited = [vertex for vertex in range(self.n)]
-        # here we'll be saving Dijkstra's optimal distances along the matrix main diagonal,
-        # so we make a proper use of that idle memory section
+        # here we'll be saving Dijkstra's optimal distances along the matrix main diagonal, for saving memory resources
         for ix in range(self.n):
             self[ix][ix] = None         # a 'None' value here means infinity in our algorithm version
         # start by assigning 0 for the distance from start vertex
