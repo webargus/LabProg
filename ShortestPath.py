@@ -69,11 +69,9 @@ class Graph(list):
                 edges.append(v1)
         return edges
 
-    def get_edge_distance(self, v1, v2):
-        return self[min(v1, v2)][max(v1, v2)]
-
     def dijkstra(self, v1, target):
-        #
+        # we'll save child-parent vertices as key-value pairs in the 'paths' dictionary as we move into the graph
+        # in search of our target city, so that we'll be able to rebuild the full path from source to target later
         paths = {}
         # Fill in list with vertex ids, which is necessary to mark vertices as visited as we sift through graph;
         # we're going to mark visited nodes replacing them with 'None' instead of removing
@@ -90,7 +88,9 @@ class Graph(list):
         while current is not None:
             # check each neighbor of current city
             for neighbor in self.get_edges(current):
-                dist_from_current = self[current][current] + self.get_edge_distance(neighbor, current)
+                # update neighbor's distance from origin with the shortest distance to it so far
+                # notice that None here stands for infinity
+                dist_from_current = self[current][current] + self[min(neighbor, current)][max(neighbor, current)]
                 if (self[neighbor][neighbor] is None) or (dist_from_current < self[neighbor][neighbor]):
                     self[neighbor][neighbor] = dist_from_current
                     paths[neighbor] = current
@@ -113,15 +113,15 @@ class Graph(list):
                     current = x
             if shortest is None:
                 break
-        # redo path to shortest distance
+        # redo shortest distance path from target to origin
         path = [target]
-        if len(paths) > 0:
+        if (len(paths) > 0) and (target in paths):
             parent = paths[target]
             while parent != v1:
                 path.append(parent)
                 parent = paths[parent]
             path.append(v1)
-            path.reverse()
+            path.reverse()              # reverse path so that it goes from source to target city
         return path
 
     # DFS, non-recursive method that returns all possible paths between 2 cities

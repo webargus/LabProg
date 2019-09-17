@@ -161,22 +161,25 @@ class ShortestPathPanel:
         self.__thread("Recursive search", source, target)
 
     def __thread_dijkstra(self, source, target):
+        self.text.append_text("Starting Dijkstra thread...\n")
+        Tools.Tools.master.update_idletasks()
         timer = Tools.Timer()
         timer.start()
         path = self.graph.dijkstra(source, target)
         secs = timer.stop()
-        self.text.append_text(" -> ".join(["%d" % (p+1) for p in path]))
+        self.text.append_text("Dijkstra thread took %f seconds to complete\n" % secs)
         dist = self.graph[target][target]
         if dist is None:
-            dist = "None"
+            dist = "Infinite"
         else:
             dist = str(dist)
-        self.text.append_text("\n%s\n" % dist)
-        self.text.append_text(self.graph.as_matrix()+"\n")
+        self.text.append_text("Shortest path: %s %s\n" % (dist, "[" + " -> ".join(["%d" % (p+1) for p in path]) + "]\n"))
+        # self.text.append_text(self.graph.as_matrix()+"\n")        # Debugging
         self.__set_btn_states("normal")
 
     def __thread(self, script, source, target):
         self.text.append_text("Starting %s thread...\n" % script)
+        Tools.Tools.master.update_idletasks()
         timer = Tools.Timer()
         timer.start()
         if script == "DFS":
