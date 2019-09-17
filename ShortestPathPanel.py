@@ -29,7 +29,6 @@ class ShortestPathPanel:
 
         form = Frame(wrap, {"pady": 8, "padx": 8})
         form.grid({"row": 1, "column": 0, "sticky": NSEW, "pady": 8, "padx": 8})
-        form.grid_columnconfigure(1, weight=1)
 
         Label(form,
               text="No. of cities (1 < N <= %d): " % ShortestPathPanel.MAX_ARRAY_SIZE,
@@ -47,16 +46,16 @@ class ShortestPathPanel:
         Label(form, text="Start city:", font=("Arial", 9)).grid(row=1, column=0, sticky=W)
         self.start_city = StringVar()
         self.source = Entry(form, width=4, textvar=self.start_city)
-        self.source.grid(row=1, column=1, columnspan=3, sticky=W)
+        self.source.grid(row=1, column=1, sticky=W)
 
         Label(form, text="Target city:", font=("Arial", 9)).grid(row=2, column=0, sticky=W)
         self.target_city = StringVar()
         self.target = Entry(form, width=4, textvar=self.target_city)
-        self.target.grid(row=2, column=1, columnspan=3, sticky=W)
+        self.target.grid(row=2, column=1, sticky=W)
 
         self.verb = IntVar()
         self.verbose = Checkbutton(form, text="Show paths", variable=self.verb, font=("Arial", 9))
-        self.verbose.grid(row=3, column=0, columnspan=4, sticky=W)
+        self.verbose.grid(row=3, column=0, sticky=W)
 
         self.btn_depth = Button(form,
                                 text="Depth First",
@@ -134,7 +133,7 @@ class ShortestPathPanel:
         self.__apply_search(self.__thread_recursive_search)
 
     def __apply_dijkstra(self):
-        pass
+        self.__apply_search(self.__thread_dijkstra)
 
     def __apply_search(self, callback):
         params = self.__validate_city_inputs()
@@ -160,6 +159,21 @@ class ShortestPathPanel:
 
     def __thread_recursive_search(self, source, target):
         self.__thread("Recursive search", source, target)
+
+    def __thread_dijkstra(self, source, target):
+        timer = Tools.Timer()
+        timer.start()
+        path = self.graph.dijkstra(source, target)
+        secs = timer.stop()
+        self.text.append_text(" -> ".join(["%d" % (p+1) for p in path]))
+        dist = self.graph[target][target]
+        if dist is None:
+            dist = "None"
+        else:
+            dist = str(dist)
+        self.text.append_text("\n%s\n" % dist)
+        self.text.append_text(self.graph.as_matrix()+"\n")
+        self.__set_btn_states("normal")
 
     def __thread(self, script, source, target):
         self.text.append_text("Starting %s thread...\n" % script)
@@ -210,6 +224,7 @@ class ShortestPathPanel:
         self.btn_breadth.configure(state=state)
         self.btn_depth.configure(state=state)
         self.btn_recursive.configure(state=state)
+        self.btn_dijkstra.configure(state=state)
 
 
 

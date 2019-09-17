@@ -73,6 +73,8 @@ class Graph(list):
         return self[min(v1, v2)][max(v1, v2)]
 
     def dijkstra(self, v1, target):
+        #
+        paths = {}
         # Fill in list with vertex ids, which is necessary to mark vertices as visited as we sift through graph;
         # we're going to mark visited nodes replacing them with 'None' instead of removing
         # them from list, which is a way more costly operation in python
@@ -89,25 +91,38 @@ class Graph(list):
             # check each neighbor of current city
             for neighbor in self.get_edges(current):
                 dist_from_current = self[current][current] + self.get_edge_distance(neighbor, current)
-                if dist_from_current < self[neighbor][neighbor]:
+                if (self[neighbor][neighbor] is None) or (dist_from_current < self[neighbor][neighbor]):
                     self[neighbor][neighbor] = dist_from_current
+                    paths[neighbor] = current
             # mark current node as visited (None) in unvisited list, for we won't visit it again
             unvisited[current] = None
             # abort when we hit the target city
             if current == target:
                 break
             # before we loop back, take the next unvisited city with the shortest distance
-            # so far from origin vertex, for our current city
-            try:
-                # get shortest distance among unvisited cities
-                shortest = min(self[x][x] for x in unvisited if unvisited[x] is not None)
-                # do the reverse thing to get the vertex
-                current = [x for x in unvisited if self[x][x] == shortest][0]
-            except ValueError:
-                # catch case where current vertex has no edges do other vertices, which makes target unreachable,
-                # i.e., when we got only infinite distances (None values) for all unvisited cities
-                current = None
-
+            # so far from previous vertex, for our current city
+            # break out if the shortest distance results infinite, which means that the city is unreachable
+            shortest = None
+            for x in unvisited:
+                if x is None:               # city already visited
+                    continue
+                if self[x][x] is None:      # infinite distance
+                    continue
+                if (shortest is None) or (shortest > self[x][x]):
+                    shortest = self[x][x]
+                    current = x
+            if shortest is None:
+                break
+        # redo path to shortest distance
+        path = [target]
+        if len(paths) > 0:
+            parent = paths[target]
+            while parent != v1:
+                path.append(parent)
+                parent = paths[parent]
+            path.append(v1)
+            path.reverse()
+        return path
 
     # DFS, non-recursive method that returns all possible paths between 2 cities
     def find_paths_depth(self, v1, target):
