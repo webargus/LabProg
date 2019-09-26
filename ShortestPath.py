@@ -142,7 +142,7 @@ class Graph(list):
         path = [v1]
         queue.append(path)
         paths = []      # path accumulator
-        # repeat search until there is no more cities to visit
+        # repeat search until there are no more cities to visit
         while len(queue) > 0:
             path = queue.popleft()                    # remove queue left-most path, as we're doing a breadth search
             if path[len(path)-1] == target:           # save path whenever we hit our target
@@ -173,8 +173,10 @@ class Graph(list):
     def calc_shortest(self, paths):
         if len(paths) == 0:             # no paths found, abort
             return "Infinite", "No path available"
+        # calculate distance of first path to compare it to the next ones (if any)
         d = self.calc_distance(paths[0])
         p = paths[0]
+        # loop through all other paths seeking for a shorter distance
         for path in paths:
             dist = self.calc_distance(path)
             if dist < d:
@@ -184,6 +186,8 @@ class Graph(list):
 
     def calc_distance(self, path):
         dist = 0
+        # read distance between two consecutive vertices from their corresponding row and line in the
+        # matrix area above the main diagonal and add it to total distance in the 'dist' variable
         for ix in range(len(path)-1):
             i = path[ix]
             j = path[ix+1]
