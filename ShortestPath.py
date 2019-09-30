@@ -37,15 +37,12 @@ class Graph(list):
     def generate_matrix(self, sz):
         del self[:]
         self.n = sz
-        line = []
-        for i in range(self.n):
-            line.append(None)
-        for row in range(self.n):
-            l0 = line[:]
-            for col in range(row+1, self.n):
-                if random.random() > .2:
-                    l0[col] = 1 + int(random.random() * Graph.MAX_DIST)
-            self.append(l0)
+        self.extend([[self.__generate_random(row, col) for col in range(self.n)] for row in range(self.n)])
+
+    def __generate_random(self, row, col):
+        if (col <= row) or (random.random() <= .2):
+            return None
+        return 1 + int(random.random() * Graph.MAX_DIST)
 
     def edge(self, v1, v2):
         if v1 == v2:
