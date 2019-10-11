@@ -19,6 +19,7 @@ for island in range(1, 4):
     min_dist = Graph.Graph.INFINITE
     max_dist = 0
 
+    dists = []
     for vertex in graph:
         dist = vertex.get_data()            # read distance result
         if (dist != 0) and (dist < min_dist):
@@ -26,7 +27,9 @@ for island in range(1, 4):
         if (dist != Graph.Graph.INFINITE) and (dist > max_dist):
             max_dist = dist
 
-    print(max_dist - min_dist)
+    dists.append(max_dist - min_dist)
+
+print(min(dists))
 
 
 
