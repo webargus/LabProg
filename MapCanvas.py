@@ -15,7 +15,6 @@ from tkinter import *
 from tkinter import messagebox as mb
 import datetime
 import CanvasGraph
-import Graph
 
 
 class MapCanvas:

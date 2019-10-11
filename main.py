@@ -12,6 +12,7 @@ import ScrollableText
 import LinearRobotPanel
 import MapPanel
 import ShortestPathPanel
+import CuttingPaperPanel
 import Tools
 
 
@@ -37,7 +38,8 @@ class Gui(Frame):
         #   add tabs
         self.nb_files = [("Linear Robot", Frame(self.nb), "LinearRobot"),
                          ("Map Coloring", Frame(self.nb), "Graph",),
-                         ("Shortest Path", Frame(self.nb), "ShortestPath")]
+                         ("Shortest Path", Frame(self.nb), "ShortestPath"),
+                         ("Cutting Paper", Frame(self.nb), "CuttingPaper")]
         for i in self.nb_files:
             self.nb.add(i[1], text="    " + i[0] + "    ")
         self.nb.grid({"row": 0, "column": 0, "sticky": NSEW})
@@ -46,6 +48,7 @@ class Gui(Frame):
         LinearRobotPanel.LinearRobotPanel(self.nb_files[0][1])
         MapPanel.MapPanel(self.nb_files[1][1])
         ShortestPathPanel.ShortestPathPanel(self.nb_files[2][1])
+        CuttingPaperPanel.CuttingPaperPanel(self.nb_files[3][1])
 
         frame = Frame(self)
         frame.grid({"row": 0, "column": 1, "sticky": NSEW, "pady": 4, "padx": 4})
