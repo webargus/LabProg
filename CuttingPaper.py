@@ -26,7 +26,8 @@ class CuttingPaper(list):
     def cut_paper(self):
         down = False
         pits = []
-        tops = []
+        top1 = []
+        top2 = []
         top = None
         for i in range(len(self.heights) - 1):
 
@@ -40,7 +41,8 @@ class CuttingPaper(list):
                     if top is None:
                         top = self.heights[i]
                     else:
-                        tops.append(min(top, self.heights[i]))
+                        top1.append(min(top, self.heights[i]))
+                        top2.append(max(top, self.heights[i]))
                         top = self.heights[i]
                     down = True
 
@@ -51,10 +53,10 @@ class CuttingPaper(list):
                     down = False
 
         if not down:
-            tops.append(min(top, self.heights[len(self.heights) - 1]))
+            top1.append(min(top, self.heights[len(self.heights) - 1]))
 
         print("pits", pits)
-        print("tops", tops)
+        print("tops", top1)
 
         cuts = []
         for ix in range(len(pits)):
@@ -62,8 +64,11 @@ class CuttingPaper(list):
             for iy in range(len(pits)):
                 if ix == iy:
                     continue
-                if (pits[iy] <= pits[ix]) and (tops[iy] > pits[ix]):
-                    cuts[ix] += 1
+                if pits[iy] <= pits[ix]:
+                    if top1[iy] > pits[ix]:
+                        cuts[ix] += 1
+                    elif top2[iy] > pits[ix]:
+                        cuts[ix] += 1
 
         print("cuts: ", cuts)
 
