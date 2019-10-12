@@ -31,12 +31,11 @@ class CuttingPaperCanvas:
             x += width
 
     def cut_paper(self):
-        pieces, height = self.cp.cut_paper()
-        print("pieces", pieces)
-        print("height", height)
-        h = self.max_height - int(height*self.scale) + 22
-        self.canvas.create_line(16, h, self.max_width - 16, h, fill="yellow", dash=(6, 2))
-        self.canvas.create_text(64, h-12, text="Total: %d pieces" % pieces, fill="red", font=("Arial", 10, "bold"))
+        cuts = self.cp.cut_paper_0()
+        for height, pieces in cuts.items():
+            h = self.max_height - int(height*self.scale) + 22
+            self.canvas.create_line(16, h, self.max_width - 16, h, fill="yellow", dash=(6, 2))
+            self.canvas.create_text(64, h-12, text="Total: %d pieces" % pieces, fill="red", font=("Arial", 10, "bold"))
 
 
 

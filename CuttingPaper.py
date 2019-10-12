@@ -23,6 +23,22 @@ class CuttingPaper(list):
         self.heights = [self.__gen_random_height() for x in range(CuttingPaper.RECTS)]
         return self.heights
 
+    def cut_paper_0(self):
+        # get unrepeated heights of rectangles
+        tops = list(set(self.heights))
+        cuts = {}
+        cutting = False
+        for top in tops:
+            cuts[top] = 0
+            for height in self.heights:
+                if height > top:
+                    if not cutting:
+                        cutting = True
+                        cuts[top] = cuts[top] + 1
+                else:
+                    cutting = False
+        return {key: cuts[key] for key in cuts.keys() if cuts[key] == max(cuts.values())}
+
     def cut_paper(self):
         down = False
         pits = []
