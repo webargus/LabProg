@@ -42,7 +42,7 @@ class CuttingPaper(list):
         print(self.peaks)                     # debug
         # get unrepeated valleys from shape
         valleys = list(set(self.peaks))
-        # accumulate valley heights and no. of cuts as key-value pairs in dict
+        # accumulate valley heights and their respective no. of cuts as key-value pairs in dict
         cuts = {}
         for valley in valleys:
             cutting = False             # bool flag raised when we're cutting through paper
