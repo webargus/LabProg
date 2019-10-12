@@ -31,13 +31,14 @@ class CuttingPaperPanel:
         self.generate_paper = Button(form,
                                      width=20,
                                      command=self._generate_paper,
-                                     text="Generate random paper")
+                                     text="Generate random shape")
         self.generate_paper.grid(row=1, column=0, sticky=W, pady=8)
 
         self.cut_paper = Button(form,
                                 width=20,
                                 command=self._cut_paper,
-                                text="Cut paper")
+                                text="Cut paper",
+                                state="disabled")
         self.cut_paper.grid(row=2, column=0, sticky=W, pady=8)
 
         canvasF = Frame(wrap, {"relief": SUNKEN, "border": 1})
@@ -49,8 +50,10 @@ class CuttingPaperPanel:
 
     def _generate_paper(self):
         self.canvas.draw_paper()
+        self.cut_paper.configure(state="normal")
 
     def _cut_paper(self):
+        self.cut_paper.configure(state="disabled")
         self.canvas.cut_paper()
 
 
