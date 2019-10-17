@@ -39,7 +39,7 @@ class Gui(Frame):
         self.nb_files = [("Linear Robot", Frame(self.nb), "LinearRobot"),
                          ("Map Coloring", Frame(self.nb), "Graph",),
                          ("Shortest Path", Frame(self.nb), "ShortestPath"),
-                         ("Cutting Paper", Frame(self.nb), "CuttingPaper")]
+                         ("Cutting Paper", Frame(self.nb), "CuttingPaperObi")]
         for i in self.nb_files:
             self.nb.add(i[1], text="    " + i[0] + "    ")
         self.nb.grid({"row": 0, "column": 0, "sticky": NSEW})
