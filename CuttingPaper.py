@@ -31,7 +31,6 @@ class CuttingPaper(list):
         self.peaks = [self.__gen_random_height() for x in range(CuttingPaper.RECTS)]
         return self.peaks
 
-    # doing the trick:
     # walk along each paper valley and count a cut
     # whenever we cross one or more slips higher than current valley
     #  _     _

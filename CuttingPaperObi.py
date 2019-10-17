@@ -1,7 +1,4 @@
 
-n = int(input())
-peaks = [int(i) for i in input().split()]
-
 valleys = list(set(peaks))
 cuts = [0 for i in range(len(valleys))]
 for i in range(len(valleys)):
@@ -14,4 +11,5 @@ for i in range(len(valleys)):
         else:
             cutting = False
 print(max(cuts) + 1)
+
 
