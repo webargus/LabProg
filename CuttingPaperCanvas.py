@@ -31,7 +31,7 @@ class CuttingPaperCanvas:
             x += width
 
     def cut_paper(self):
-        cuts = self.cp.cut_paper()
+        cuts = self.cp.cut_paper_0()
         for height, pieces in cuts.items():
             h = self.max_height - int(height*self.scale) + 22
             self.canvas.create_line(16, h, self.max_width - 16, h, fill="yellow", dash=(6, 2))

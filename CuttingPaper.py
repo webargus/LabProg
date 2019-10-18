@@ -15,7 +15,7 @@ class CuttingPaper(list):
 
     MAX_HEIGHT = 15             # max height of paper slips
     MIN_HEIGHT = 5              # min paper slip height
-    RECTS = 30                  # max no. of paper slips displayed horizontally
+    RECTS = 6                  # max no. of paper slips displayed horizontally
 
     def __init__(self):
         super(CuttingPaper, self).__init__()
@@ -29,6 +29,7 @@ class CuttingPaper(list):
     def gen_paper(self):
         del self.peaks[:]
         self.peaks = [self.__gen_random_height() for x in range(CuttingPaper.RECTS)]
+        # print("[" + ", ".join([str(x) for x in self.peaks]) + "]")      # debug
         return self.peaks
 
     # walk along each paper valley and count a cut
@@ -38,7 +39,6 @@ class CuttingPaper(list):
     # | |_|   |_        valleys
     #
     def cut_paper(self):
-        print(" ".join([str(x) for x in self.peaks]))                     # debug
         # get unrepeated valleys from shape
         valleys = list(set(self.peaks))
         # accumulate valley heights and their respective no. of cuts as key-value pairs in dict
@@ -55,6 +55,28 @@ class CuttingPaper(list):
                     cutting = False     # we finish cutting when falling in a valley again
         # return valleys for which we got a maximum no. of cuts as dict key-value pairs
         return {key: cuts[key] + 1 for key in cuts.keys() if cuts[key] == max(cuts.values())}
+
+    def cut_paper_0(self):
+
+        peaks = [[int(y), x + 1] for x, y in enumerate(self.peaks)]
+        peaks.sort()
+        flags = [0] + [1 for x in range(len(peaks))] + [0]
+        print(flags)
+        print(peaks)
+
+        maximum = slip_cnt = 1
+
+        for h, ix in peaks:
+            flags[ix] = 0
+            if flags[ix - 1] and flags[ix + 1]:
+                slip_cnt += 1
+            elif not flags[ix - 1] and not flags[ix + 1]:
+                slip_cnt -= 1
+            if slip_cnt > maximum:
+                maximum = slip_cnt
+                h_max = h
+
+        return {h_max: maximum + 1}
 
 
 
