@@ -15,7 +15,7 @@ class CuttingPaper(list):
 
     MAX_HEIGHT = 15             # max height of paper slips
     MIN_HEIGHT = 5              # min paper slip height
-    RECTS = 6                  # max no. of paper slips displayed horizontally
+    RECTS = 30                  # max no. of paper slips displayed horizontally
 
     def __init__(self):
         super(CuttingPaper, self).__init__()
