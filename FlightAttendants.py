@@ -10,27 +10,23 @@ def maximum(a, b):
     return b
 
 def dijkstra(graph, v1):
-    n = len(graph)
-    # We'll take advantage of unused main diagonal of graph matrix to save Dijkstra's distance data
+    # We'll take advantage of idle main diagonal of graph matrix to save Dijkstra's distance data
     # as we explore vertices into graph
     for ix in range(n):
-        graph[ix][ix] = None  # a 'None' value here means infinity in our algorithm version
+        graph[ix][ix] = None  # a 'None' value here means infinity
     # start by assigning 0 for the distance from start vertex
     graph[v1][v1] = 0
     # set current city to start vertex
     current = v1
     v_max_dist = 0      # variable to memoize max. distance (weight sum) to v1
-    # Create a list filled with vertex ids, which is necessary to flag vertices as visited
-    # as we sift through graph with dijkstra algorithm;
-    # we're going to flag visited nodes with 'None' instead of removing
-    # them from list, which is a way more costly operation in python
-    unvisited = [vertex for vertex in range(n)]
+    for i in range(n):
+        unvisited[i] = i
     while 1:
         # check each neighbor of current city
         for neighbor in range(n):
             if neighbor == current:
                 continue
-            weight = graph[current][neighbor]
+            weight = graph[maximum(current, neighbor)][minimum(current, neighbor)]
             if weight is None:
                 continue
             # update neighbor's distance from origin with the shortest distance to it so far
@@ -46,8 +42,8 @@ def dijkstra(graph, v1):
         # so far from previous vertex, for our current city
         # break out if the shortest distance results infinite, which means that the city is unreachable
         shortest = None
-        for x in unvisited:
-            if x is None:  # city already visited
+        for x in range(n):
+            if unvisited[x] is None:  # city already visited
                 continue
             if graph[x][x] is None:  # infinite distance
                 continue
@@ -67,15 +63,27 @@ def dijkstra(graph, v1):
 
 n, m = (int(x) for x in input().split())
 
-# create nXn static graph matrix, for we won't be appending any more vertices to it
-graph = [[None for x in range(n)] for y in range(n)]
+# create nXn/2 static graph matrix, for we won't be appending any more vertices to it
+# and we'll be using only the half below its main diagonal, since we expect a bidirectional graph input
+graph = [[None for x in range(y+1)] for y in range(n)]
 
+# Create a list filled with vertex ids, which is necessary to flag them as visited
+# as we sift through graph with dijkstra algorithm;
+# we're going to flag visited nodes with 'None' instead of removing
+# them from list, which would be a way more costly operation in python
+unvisited = [vertex for vertex in range(n)]
+
+# fill in only lower half of matrix with edge inputs
 for ix in range(m):
     u, v, w = (int(x) for x in input().split())
-    if (graph[u][v] is None) or (graph[u][v] > w):
-        graph[u][v] = graph[v][u] = w
+    temp = u
+    u = maximum(u, v)
+    if v == u:
+        v = temp
+    if (graph[u][v] is None) or (graph[u][v] > w):      # discard longest edge weight (longest distance)
+        graph[u][v] = w
 
-# print_graph(graph)
+# print_graph(graph)        # debugging
 global_min_dist = None
 for v in range(n):
     v_max_dist = dijkstra(graph, v)
@@ -83,23 +91,11 @@ for v in range(n):
         global_min_dist = v_max_dist
     else:
         global_min_dist = minimum(global_min_dist, v_max_dist)
-#    print_graph(graph)
+#    print_graph(graph)     #debugging
 
 print(global_min_dist)
 
 
-
-"""let dist be a |V| × |V| array of minimum distances initialized to ∞ (infinity)
-2 for each edge (u,v)
-3    dist[u][v] ← w(u,v)  // the weight of the edge (u,v)
-4 for each vertex v
-5    dist[v][v] ← 0
-6 for k from 1 to |V|
-7    for i from 1 to |V|
-8       for j from 1 to |V|
-9          if dist[i][j] > dist[i][k] + dist[k][j] 
-10             dist[i][j] ← dist[i][k] + dist[k][j]
-11         end if"""
 
 
 
