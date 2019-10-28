@@ -129,8 +129,6 @@ print(queue.shift())
 print(queue.shift())
 print(queue)
 print("len=", len(queue))
-queue[0]
-
 
 
 
