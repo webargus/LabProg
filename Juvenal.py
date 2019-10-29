@@ -17,12 +17,6 @@ class QueueNode:
     def get_data(self):
         return self.data
 
-    def set_data(self, data):
-        self.data = data
-
-    def get_next(self):
-        return self.next
-
     def set_next(self, node):
         self.next = node
 
@@ -61,142 +55,70 @@ class ProgLabQueue:
         self.end.set_next(None)
         return ret
 
-    def unshift(self, data):
-        node = QueueNode(data)
-        self.n += 1
-        if self.init is None:
-            self.init = self.end = node
-            return
-        self.init.set_prev(node)
-        node.set_next(self.init)
-        self.init = node
-
-    def shift(self):
-        if self.init is None:
-            raise IndexError
-        self.n -= 1
-        ret = self.init.get_data()
-        if self.init == self.end:
-            self.init = self.end = None
-            return ret
-        self.init = self.init.get_next()
-        self.init.set_prev(None)
-        return ret
-
-    def __get_node_at(self, ix):
-        if (ix < 0) or (ix >= self.n):
-            raise IndexError
-        i = 0
-        node = self.init
-        while i <= ix:
-            if i == ix:
-                return node
-            i += 1
-            node = node.get_next()
-
-    def __getitem__(self, key):
-        return self.__get_node_at(key).get_data()
-
-    def __setitem__(self, key, data):
-        self.__get_node_at(key).set_data(data)
-
     def __len__(self):
         return self.n
-
-    def __str__(self):
-        s = "["
-        i = 0
-        node = self.init
-        while i < self.n:
-            s += str(node.get_data())
-            if i < self.n - 1:
-                s += ", "
-            node = node.get_next()
-            i += 1
-        return s + "]"
 
 
 class Board:
 
     def __init__(self, n, m):
-        # initialize n+2 X m+2 battle board static matrix, i.e., 2 lines and 2 rows larger than problem board;
+        # initialize n+2 X m+2 STATIC battle board matrix, i.e., 2 lines and 2 rows larger than problem board;
         # we'll copy input board into the center of this matrix and surround it with water;
-        # notice that the script never appends or removes any element from matrix, but updates
+        # notice that the script never appends or removes elements from matrix, only updates them
         self.mtx = [[0 for y in range(m+2)] for x in range(n+2)]
 
-    # python print method overload to help with debugging
-    def __str__(self):
-        s = ""
-        for x in range(len(self.mtx)):
-            for y in range(len(self.mtx[x])):
-                s += "{:<2}".format(str(self.mtx[x][y]))
-            s += "\n"
-        return s
+    # class core recursive method: explore connected ship blocks seeking sunken ships;
+    # strategy: check adjacent ship blocks breadth-first whenever we stumble across an unvisited block;
+    #           we count a ship as sunken only if all ship blocks were hit (bit 2 raised)
+    def __explore_ship(self, ship, cnt=1):
+        if len(ship) == 0:                      # base case (queue empty => we visited all blocks)
+            return cnt
+        i, j = ship.pop()
+        if self.mtx[i][j] & 0b101 == 1:         # not visited and is ship block
+            self.mtx[i][j] |= 0b100             # set to visited
+            if self.mtx[i][j] & 0b010 == 0:     # ship block not hit, ship still afloat
+                cnt = 0
+            # explore left, right, upper and lower matrix blocks for other possible ship blocks
+            ship.push((i, j-1))
+            ship.push((i, j+1))
+            ship.push((i-1, j))
+            ship.push((i+1, j))
+        return self.__explore_ship(ship, cnt)
 
-    # ancillary private method to add a ship block to adjacency list if ship block not visited yet
-    def __get_adjacent(self, adj, i, j):
-        if self.mtx[i][j] & 5 == 1:       # not visited and is ship part
-            self.mtx[i][j] |= 4
-            adj.push((i, j))
-
-    # ancillary private method to gather all ship blocks surrounding a given (i, j) ship block
-    def __get_adjacents(self, adj, i, j):
-        self.__get_adjacent(adj, i, j - 1)
-        self.__get_adjacent(adj, i, j + 1)
-        self.__get_adjacent(adj, i - 1, j)
-        # self.__get_adjacent(adj, i - 1, j - 1)
-        # self.__get_adjacent(adj, i - 1, j + 1)
-        self.__get_adjacent(adj, i + 1, j)
-        # self.__get_adjacent(adj, i + 1, j - 1)
-        # self.__get_adjacent(adj, i + 1, j + 1)
-
-    # main class public method: scan board looking for sunken ships;
     def scan(self):
+        # for some unknown reason, run.codes adds 1s to the right-most column of matrix;
+        # it never happens either in URI judge, OBI, or in my own comp;
+        # work-around: fill in right-most column back again with zeroes!
+        # OBI: https://olimpiada.ic.unicamp.br/pratique/p2/2010/f1/batalha/
+        # URI: https://www.urionlinejudge.com.br/judge/pt/problems/view/2371
+        ship = ProgLabQueue()
         for i in range(len(self.mtx)):
             self.mtx[i][len(self.mtx[i])-1] = 0
+        # begin crawling through mtx starting from coords (1,1) all the way to (N,M)
         i = j = 1
-        total_cnt = 0
+        total_cnt = 0                                   # var to accumulate global wrecked ship count
         while i <= len(self.mtx)-2:
-            if self.mtx[i][j] & 5 == 1:                # ship part not visited yet
-                self.mtx[i][j] |= 4                    # set as visited
-                adj = ProgLabQueue()
-                adj.push((i, j))
-                cnt = 1
-                while len(adj) > 0:
-                    i0, j0 = adj.pop()
-                    self.__get_adjacents(adj, i0, j0)
-                    if self.mtx[i0][j0] & 2 == 0:  # ship part not shot
-                        cnt = 0
-                total_cnt += cnt
-
-            if j == len(self.mtx[i])-2:
+            if self.mtx[i][j] & 0b101 == 1:             # ship part, not visited yet, so explore it
+                ship.push((i, j))
+                total_cnt += self.__explore_ship(ship)
+            if j == len(self.mtx[i])-2:                 # update loop pointers
                 j = 0
                 i += 1
             j += 1
         return total_cnt
 
+# ------------------------------------------------------------------------------------------
+#   DATA INPUT SECTION
 
 # get size of matrix (naval battle board size)
 n, m = (int(x) for x in input().split())
+
 # input nXm matrix filled with 0s and 1s to retrieve water (".") and ship ("#") coordinates, respectively
-"""for x in range(n):
-    print(input())
-k = int(input())
-print(k)
-for x in range(k):
-    print(input())
-"""
 y = ord(".")
 mtx = [[1-ord(x)//y for x in list(input())] for x in range(n)]
-"""print("input mtx:")
-for x in range(n):
-    for y in range(m):
-        print(mtx[x][y], end=" ")
-    print("")
-"""
+
 # create and fill Board obj
 board = Board(n, m)
-
 x = y = 0
 while x < len(mtx):
     board.mtx[x + 1][y + 1] = mtx[x][y]
@@ -205,256 +127,15 @@ while x < len(mtx):
         y = 0
         x += 1
 
+# shoot into board
 k = int(input())
 for i in range(k):
     x, y = (int(x) for x in input().split())
-    board.mtx[x][y] |= 2              # raise bit 2 to flag shot on coordinates (x, y)
-
-print(board)        # debug
+    board.mtx[x][y] |= 0b10              # raise bit 1 to flag shot on coordinates (x, y)
 
 print(board.scan())
 
-print(board)        # debug
-
-
-
 """
-25 25
-...##.#....#...###.......
-#.......#.#...#.#...##...
-#.#..#...#......#........
-.#.#....#..#...#.#.#..#..
-..#.......##..#.....#.##.
-......#.#.#...#....###..#
-.#..#.#.#..#.#.##..#..#..
-....#...##.#...###.#..#.#
-.#...#......##..##..#.#..
-..##........#...##..###..
-#..#.....#.....##...##...
-..#....#.......#....###..
-...........#..######..#..
-##.#.#.#.......#.....#...
-#......#...###.#.#.#.....
-......#.#..............#.
-.....#....#......##..#...
-..##.##...#..#.....#...#.
-#.##......#..#.##.#...#..
-#...##..#.#..#........##.
-...#..##......#..#.#...##
-.#..###........#....#.#..
-....#.#......#..#.....#.#
-......#..#...............
-.#............#.#.#.#....
-208
-16 4
-15 2
-10 15
-5 24
-10 16
-4 1
-20 21
-20 1
-13 22
-13 14
-22 10
-20 9
-11 10
-22 1
-10 7
-12 6
-20 18
-14 11
-8 10
-25 13
-5 19
-25 12
-10 14
-16 12
-3 21
-24 1
-22 4
-15 12
-16 25
-14 16
-5 21
-7 23
-6 2
-5 14
-2 8
-3 12
-5 15
-6 16
-1 21
-4 9
-23 7
-8 4
-1 8
-11 13
-24 3
-8 17
-2 21
-20 19
-11 11
-10 3
-18 6
-13 6
-6 13
-5 10
-17 2
-1 25
-13 13
-11 18
-10 11
-8 13
-12 25
-12 19
-2 19
-8 18
-25 9
-17 12
-25 25
-1 16
-19 22
-10 17
-16 17
-21 6
-12 24
-3 4
-19 7
-9 2
-13 9
-4 5
-16 6
-13 12
-7 11
-5 9
-23 6
-12 23
-18 17
-20 16
-3 14
-22 19
-14 24
-11 19
-12 12
-12 2
-9 7
-23 25
-6 25
-6 8
-11 15
-1 14
-10 21
-3 17
-22 22
-7 13
-17 5
-9 12
-8 5
-3 19
-17 24
-20 22
-17 20
-8 6
-19 8
-6 19
-9 24
-25 11
-15 11
-12 20
-22 12
-18 25
-15 16
-1 20
-22 24
-17 8
-14 6
-8 2
-2 7
-9 22
-2 15
-5 18
-13 5
-7 19
-20 25
-11 12
-2 17
-23 3
-5 1
-21 17
-13 1
-12 7
-2 18
-14 7
-5 11
-4 21
-9 4
-2 25
-16 10
-8 7
-14 19
-10 12
-9 6
-23 19
-17 17
-24 16
-2 3
-16 21
-13 3
-24 15
-19 21
-18 10
-22 17
-8 20
-1 5
-1 23
-4 10
-24 13
-23 12
-21 2
-9 8
-21 18
-3 7
-4 12
-21 8
-19 23
-25 3
-24 9
-19 18
-17 21
-6 4
-3 24
-12 21
-2 4
-7 16
-21 19
-15 9
-16 11
-24 18
-13 7
-2 11
-2 2
-6 10
-17 25
-10 18
-16 2
-22 16
-12 5
-23 10
-10 6
-25 1
-24 2
-6 3
-5 8
-5 20
-13 24
-11 24
-2 24
-23 11
-1 22
-13 10
-18 23
-
 100 100
 ##...#........###.#####.##.###..........###.......#..####.......####.......######.#...##....#####...
 ##.#.#...##....#...##....#...#.#.......###...##...##..##..............#.#......#..###.##............
@@ -3557,13 +3238,6 @@ print(board)        # debug
 48 64
 32 38
 23 35
+
 """
-
-
-
-
-
-
-
-
 
