@@ -68,86 +68,68 @@ class Farm:
         # fill matrix with binary 101, meaning fence (bit 0 raised) and visited (bit 2 raised)
         self.mtx = [[0b101 for y in range(m+2)] for x in range(n+2)]
 
-    # python print method overload to help with debugging
-    def __str__(self):
-        s = ""
-        for x in range(len(self.mtx)):
-            for y in range(len(self.mtx[x])):
-                s += "{:<4}".format(str(self.mtx[x][y]))
-            s += "\n"
-        return s
-
-    # ancillary private method to add a farm spot to adjacency list if farm spot not visited yet
-    def __get_adjacent(self, adj, i, j):
-        if self.mtx[i][j] & 0b111 == 0b101:       # that's a fence spot, so do not include it
-            return
-        self.mtx[i][j] |= 4                       # set farm spot to visited
-        adj.push((i, j))                          # and add it to queue for analysis
-
-    # ancillary private method to gather all farm spots surrounding a given (i, j) farm spot
-    def __get_adjacents(self, adj, i, j):
-        self.__get_adjacent(adj, i, j - 1)
-        self.__get_adjacent(adj, i, j + 1)
-        self.__get_adjacent(adj, i - 1, j)
-        self.__get_adjacent(adj, i + 1, j)
+    # all fence spots have been pre-set as visited
+    def __seek_animal(self, pasture, sheep=0, wolves=0):
+        if len(pasture) == 0:
+            return sheep, wolves
+        i, j = pasture.pop()
+        if self.mtx[i][j] & 0b100 == 0:         # this spot hasn't been visited yet, so let's check it out
+            self.mtx[i][j] |= 0b100             # set spot as visited
+            spot = self.mtx[i][j] & 0b11
+            if spot == 0b10:                    # that's a sheep
+                sheep += 1
+            elif spot == 0b11:                  # that's a wolf
+                wolves += 1
+            pasture.push((i, j-1))
+            pasture.push((i, j+1))
+            pasture.push((i-1, j))
+            pasture.push((i+1, j))
+        return self.__seek_animal(pasture, sheep, wolves)
 
     # main class public method: scan farm area looking for sheep and wolves within fences;
     # strategy: check adjacent farm spots breadth-first whenever we stumble across an unvisited farm spot;
     #           count sheep and wolves as we sift through spots
+    # convention: 0b00 == empty pasture; 0b01 == fence; 0b10 == sheep; 0b11 == wolf
     def scan(self):
         # begin crawling through mtx starting from coords (1,1) all the way to (N,M)
         i = j = 1
+        # using custom-made queue for breadth-first pasture lookup
+        pasture = ProgLabQueue()
         total_sheep = total_wolves = 0
         while i <= len(self.mtx)-2:
-            if self.mtx[i][j] & 0b111 != 0b101:  # that's NOT a fence spot, so let's check it out
-                self.mtx[i][j] |= 4                    # set spot as visited
-                adj = ProgLabQueue()                   # using custom queue, since we're going to 'append' data
-                adj.push((i, j))
-                sheep_cnt = wolf_cnt = 0
-                while len(adj) > 0:
-                    i0, j0 = adj.pop()
-                    self.__get_adjacents(adj, i0, j0)
-                    flag = self.mtx[i0][j0] and 0b11
-                    if flag == 0b10:                       # we found a sheep
-                        sheep_cnt += 1
-                    elif flag == 0b11:                     # we found a wolf
-                        wolf_cnt += 1
-                if wolf_cnt >= sheep_cnt:                  # wolves win
-                    total_wolves += wolf_cnt
-                else:                                      # sheep win
-                    total_sheep += sheep_cnt
-
+            if self.mtx[i][j] & 0b111 != 0b101:        # that's NOT a fence spot, so let's check it out
+                pasture.push((i, j))
+                sheep, wolves = self.__seek_animal(pasture)
+                if sheep > wolves:
+                    total_sheep += sheep
+                else:
+                    total_wolves += wolves
             if j == len(self.mtx[i])-2:                 # update loop pointers
                 j = 0
                 i += 1
             j += 1
         return total_sheep, total_wolves
 
+
 # get size of matrix (naval battle board size)
 n, m = (int(x) for x in input().split())
 
-# input nXm matrix filled with 0s and 1s to retrieve water (".") and ship ("#") coordinates, respectively
-y = ord(".")
-mtx = [[1-ord(x)//y for x in list(input())] for x in range(n)]
+# input nXm matrix filled with 0b00 (== empty pasture), 0b101 (== visited fence),
+# 0b10 (== sheep) and 0b11 (== wolf), respectively
+farm = Farm(n, m)
+for row in range(n):
+    blocks = list(input())
+    for col in range(len(blocks)):
+        block = 0b101                     # default == visited fence block
+        if blocks[col] == '.':
+            block = 0b00                  # just pasture
+        elif blocks[col] == 'k':
+            block = 0b10                  # that's a sheep
+        elif blocks[col] == 'v':
+            block = 0b11                  # that's a wolf
+        farm.mtx[row+1][col+1] = block
 
-# create and fill Board obj
-board = Board(n, m)
-x = y = 0
-while x < len(mtx):
-    board.mtx[x + 1][y + 1] = mtx[x][y]
-    y += 1
-    if y == len(mtx[x]):
-        y = 0
-        x += 1
-
-# get shots
-k = int(input())
-for i in range(k):
-    x, y = (int(x) for x in input().split())
-    board.mtx[x][y] |= 2              # raise bit 2 to flag shot on coordinates (x, y)
-
-
-print(board.scan())
+print("%d %d" % farm.scan())
 
 
 
