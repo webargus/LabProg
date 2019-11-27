@@ -1,3 +1,32 @@
+"""
+
+recursive_dfs(g, u):
+    rotule u como visitado
+    para toda aresta de u até v, faça:
+        se o vértice v não estiver rotulado como visitado, então:
+            recursive_dfs(g, v)
+
+interactive_dfs(g, origin):
+    be S a stack
+    s.pile(origin)
+    while s is not empty:
+        v = s.pop()
+        if v is not labeled as visited, do:
+            label v as visited
+            for each u adjacent to v:
+                s.pile(u)
+
+interactive_bfs(g, origin):
+    be Q a queue
+    q.insert(origin)
+    while q is not empty:
+        u = q.remove()
+        for each adjacent vertex v of u:
+            if v is not visited:
+                label v as visited
+                q.insert(v)
+"""
+
 
 class QueueNode:
 
@@ -115,29 +144,82 @@ class ProgLabQueue:
         return s + "]"
 
 
+class GraphNode:
 
-queue = ProgLabQueue()
-queue.push(1)
-queue.push(5)
-queue.push("test")
-print(len(queue))
-print(queue)
-print(queue.pop())
-print(queue.pop())
-print(queue.pop())
-print(len(queue))
-queue.unshift("great")
-queue.unshift("is")
-queue.unshift("Edson")
-queue[2] = "forgetful"
-print(queue[0])
-print(queue)
-print(queue.has_item("mist").get_data())
-print(queue.shift())
-print(queue.shift())
-print(queue.shift())
-print(queue)
-print("len=", len(queue))
+    def __init__(self, node_id):
+        self.node_id = node_id              # save node id (label)
+        self.edges = ProgLabQueue()         # create blank list of edges
+        self.color = None                   # assign no color to vertex as default color
+
+    # find degree of node
+    @staticmethod
+    def degree(self):
+        return len(self.edges)
+
+    # check if this node edges another
+    def has_edge_to(self, other):            # other must be obj of type Node
+        for edge in self.edges:
+            if edge.n2 == other:
+                return True
+        return False
+
+    # add edge to node
+    def add_edge(self, other):              # other must be of type Node
+        edge = self.Edge(self, other)
+        if not self.edges.has_item(edge):
+            self.edges.push(edge)
+            other.add_edge(self)
+
+    def __eq__(self, other):                # other must be of type Node
+        return self.node_id == other.node_id
+
+    def __str__(self):
+        s = "[node id: %s, " % self.node_id
+        s += "edges: %s, " % self.edges
+        s += "]"
+        return s
+
+    # Nested class Edge to construct (bidirectional) edge objects between Node instances
+    class Edge:
+
+        def __init__(self, n1, n2):     # n1, n2 are Node objects
+            self.n1 = n1
+            self.n2 = n2
+
+        def __eq__(self, other):
+            return (self.n1 == other.n1) and (self.n2 == other.n2)
+
+        def __str__(self):
+            return "%s -> %s" % (self.n1.node_id, self.n2.node_id)
+
+
+class Graph:
+
+    def __init__(self):
+        self.nodes = ProgLabQueue()
+
+    def add_node(self, node):
+        self.nodes.push(node)
+
+
+graph = Graph()
+node1 = GraphNode(1)
+node2 = GraphNode(2)
+node3 = GraphNode(3)
+node4 = GraphNode(4)
+
+node1.add_edge(node2)
+node2.add_edge(node3)
+node3.add_edge(node1)
+node3.add_edge(node4)
+
+graph.add_node(node1)
+graph.add_node(node2)
+graph.add_node(node3)
+graph.add_node(node4)
+
+print(graph.nodes)
+
 
 
 
