@@ -27,8 +27,8 @@ interactive_bfs(g, origin):
                 q.insert(v)
 """
 
-
-class QueueNode:
+####################################################################################################
+class StackNode:
 
     def __init__(self, item):
         self.item = item
@@ -53,72 +53,27 @@ class QueueNode:
         self.prev = node
 
 
-class ProgLabQueue:
+class ProgLabStack:
 
     def __init__(self):
         self.init = self.end = None
 
-    def __iter__(self):
+    def __iter__(self):                 # overload python std iterator call, so as to make our stack iterable
         node = self.init
         while node is not None:
             yield node.get_data()
             node = node.get_next()
 
     def push(self, item):
-        node = QueueNode(item)
+        node = StackNode(item)
         if self.init is None:
             self.init = self.end = node
             return
         self.end.set_next(node)
         node.set_prev(self.end)
         self.end = node
+##################################################################################################
 
-    def pop(self):
-        if self.init is None:
-            raise IndexError
-        ret = self.end.get_data()
-        if self.init == self.end:
-            self.init = self.end = None
-            return ret
-        self.end = self.end.get_prev()
-        self.end.set_next(None)
-        return ret
-
-    def is_empty(self):
-        return self.init is None
-
-    def __str__(self):
-        s = "["
-        node = self.init
-        while node is not None:
-            s += str(node.get_data()) + ", "
-            node = node.get_next()
-        return s + "]"
-
-
-"""
-4 2 4
-1 2
-2 3
-3 4
-
-16 2 12
-3 5
-12 3
-5 1
-2 1
-4 1
-6 1
-7 1
-12 8
-12 9
-12 10
-12 11
-3 13
-13 14
-15 13
-15 16
-"""
 
 INFINITE = float("inf")                     # set infinite as python's greatest integer (we'll be using dijkstra)
 
@@ -143,13 +98,15 @@ for i in range(n-1):
 
 
 # ancillary function to get all vertices of graph that have an edge to edge @u
+# notice that we're returning our own self-implemented stack here, instead of a standard python list,
+# so as to try to avoid the 'appenditis' thing
 def get_edges(u):
-    ret = []
+    ret = ProgLabStack()
     for v in range(n):
         if edges[v] == u:
-            ret.append(v+1)
+            ret.push(v+1)
     if edges[u-1] != 0:
-        ret.append(edges[u-1])
+        ret.push(edges[u-1])
     return ret
 
 
